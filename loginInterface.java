@@ -16,7 +16,7 @@ public class loginInterface {
         
         System.out.println("Select login type: \n1. Admin \n2. Tenant");
         int choice = scanner.nextInt();
-        scanner.nextLine(); // Consume the newline
+        scanner.nextLine();
         
         switch (choice) {
             case 1:
