@@ -1,4 +1,3 @@
-
 package com.mycompany.apartmentrental;
 
 import java.util.Scanner;
@@ -61,7 +60,16 @@ public class ApartmentManagementSystem {
         System.out.println("--------------");
         System.out.println("| View Rooms |");
         System.out.println("--------------");
-        // Implementation details...
+        System.out.println("Filter by:");
+        System.out.println("[1] Room Number");
+        System.out.println("[2] Room Type");
+        System.out.println("[3] Room Capacity");
+        System.out.println("[4] Room Rate");
+        System.out.println("[5] Room Status");
+        System.out.println("[6] Room Occupant");
+        System.out.println("[0] None");
+        System.out.println("\n");
+        System.out.println("Enter Selection: ");
     }
 
     private void viewTenants() {
@@ -75,7 +83,20 @@ public class ApartmentManagementSystem {
         System.out.println("-----------------------");
         System.out.println("| Payment Maintenance |");
         System.out.println("-----------------------");
-        // Implementation details...
+        System.out.print("Enter Payment ID: ");
+        int paymentID = scanner.nextInt();
+        scanner.nextLine();
+        
+        System.out.print("Enter Billing ID: ");
+        int billingID = scanner.nextInt();
+        scanner.nextLine();
+
+        System.out.print("Enter Payment Date (YYYY-MM-DD): ");
+        String paymentDate = scanner.nextLine();
+
+        System.out.print("Enter Amount: ");
+        float amount = scanner.nextFloat();
+        scanner.nextLine(); 
     }
 
     private void apartmentMaintenance() {
