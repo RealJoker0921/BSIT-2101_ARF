@@ -4,14 +4,14 @@ package com.mycompany.apfbc;
 import java.util.Scanner;
 
 public class loginInterface {
-    // Predefined tenant credentials
+    
     private static final String TENANT_USERNAME = "tenant";
     private static final String TENANT_PASSWORD = "tenant123";
 
     public static void main(String[] args) {
         loginInterface LoginInterface = new loginInterface();
         
-        // Use Scanner to read input from the console
+        
         Scanner scanner = new Scanner(System.in);
         
         System.out.println("Select login type: \n1. Admin \n2. Tenant");
@@ -32,7 +32,7 @@ public class loginInterface {
         scanner.close();
     }
 
-    // Method for admin login
+    
     public void adminLoginAccount(Scanner scanner) {
         System.out.print("Enter admin username: ");
         String username = scanner.nextLine();
@@ -46,7 +46,7 @@ public class loginInterface {
         }
     }
 
-    // Method for tenant login
+    
     public void tenantLoginAccount(Scanner scanner) {
         System.out.print("Enter tenant username: ");
         String username = scanner.nextLine();
