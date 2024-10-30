@@ -8,7 +8,7 @@ public class ApartmentManagementSystem {
     private static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
-        // Mock login method (can be replaced with actual authentication logic)
+       
         if (login()) {
             showMenu();
         } else {
@@ -17,7 +17,6 @@ public class ApartmentManagementSystem {
     }
 
     private static boolean login() {
-        // Login credentials (for example purposes only)
         System.out.print("Enter Username: ");
         String username = scanner.nextLine();
         System.out.print("Enter Password: ");
