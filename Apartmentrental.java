@@ -1,6 +1,8 @@
 
 package com.mycompany.apartmentrental;
 
+import java.util.Scanner;
+
 public class Apartmentrental {
 
     public static void main(String[] args) {
@@ -11,5 +13,17 @@ public class Apartmentrental {
         } else {
             System.out.println("Login failed.");
         }
+        
+        Scanner scanner = new Scanner(System.in); 
+        System.out.print("Enter Selection: "); 
+        int selection = scanner.nextInt();
+        scanner.nextLine();
+        
+        ApartmentManagementSystem app = new ApartmentManagementSystem();
+        app.changePassword();
+        app.userMaintenance();
+        
     }
 }
+
+
