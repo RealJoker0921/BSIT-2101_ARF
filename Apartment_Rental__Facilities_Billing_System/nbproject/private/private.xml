@@ -4,8 +4,10 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/C:/Users/User/OneDrive/Documents/NetBeansProjects/Apartment_Rental__Facilities_Billing_System/src/Connectors/dbconnect.java</file>
-            <file>file:/C:/Users/User/OneDrive/Documents/NetBeansProjects/Apartment_Rental__Facilities_Billing_System/src/GUI/Home.java</file>
+            <file>file:/C:/Users/User/OneDrive/Documents/NetBeansProjects/Apartment_Rental__Facilities_Billing_System/src/Home.java</file>
             <file>file:/C:/Users/User/OneDrive/Documents/NetBeansProjects/Apartment_Rental__Facilities_Billing_System/src/GUI/Checkin.java</file>
+            <file>file:/C:/Users/User/OneDrive/Documents/NetBeansProjects/Apartment_Rental__Facilities_Billing_System/src/GUI/AdminMenu.java</file>
+            <file>file:/C:/Users/User/OneDrive/Documents/NetBeansProjects/Apartment_Rental__Facilities_Billing_System/src/GUI/Admin.java</file>
         </group>
     </open-files>
 </project-private>
