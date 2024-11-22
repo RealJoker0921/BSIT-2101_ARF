@@ -36,8 +36,6 @@ public class Home extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         bttnExit = new javax.swing.JButton();
         bttnAdmin = new javax.swing.JButton();
-        bttnCheckin = new javax.swing.JButton();
-        bttnView = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
@@ -65,55 +63,32 @@ public class Home extends javax.swing.JFrame {
             }
         });
 
-        bttnCheckin.setFont(new java.awt.Font("Lucida Bright", 1, 18)); // NOI18N
-        bttnCheckin.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/check-in-desk.png"))); // NOI18N
-        bttnCheckin.setText("Customer Check In");
-        bttnCheckin.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bttnCheckinActionPerformed(evt);
-            }
-        });
-
-        bttnView.setFont(new java.awt.Font("Lucida Bright", 1, 18)); // NOI18N
-        bttnView.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/hallway (1).png"))); // NOI18N
-        bttnView.setText("View Available Apartments");
-        bttnView.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bttnViewActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGap(38, 38, 38)
-                .addComponent(bttnView)
-                .addGap(49, 49, 49)
-                .addComponent(bttnCheckin)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(bttnAdmin)
-                .addGap(54, 54, 54)
-                .addComponent(bttnExit)
-                .addGap(47, 47, 47))
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 1120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(16, 16, 16)
+                        .addComponent(bttnAdmin)
+                        .addGap(780, 780, 780)
+                        .addComponent(bttnExit))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 1109, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(15, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGap(51, 51, 51)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(50, 50, 50)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(bttnExit)
                     .addComponent(bttnAdmin)
-                    .addComponent(bttnCheckin)
-                    .addComponent(bttnView))
+                    .addComponent(bttnExit))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 720, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 696, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(31, Short.MAX_VALUE))
         );
 
         getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, -40, 1130, 830));
@@ -122,26 +97,18 @@ public class Home extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void bttnCheckinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bttnCheckinActionPerformed
-        new Checkin().setVisible(true);
-    }//GEN-LAST:event_bttnCheckinActionPerformed
+    private void bttnAdminActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bttnAdminActionPerformed
+        new Admin().setVisible(true);
+        setVisible(false);
+    }//GEN-LAST:event_bttnAdminActionPerformed
 
     private void bttnExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bttnExitActionPerformed
         int a = JOptionPane.showConfirmDialog(null, "Want to Close Application", "Select", JOptionPane.YES_NO_OPTION);
         if(a==0)
         {
-        System.exit(0);
+            System.exit(0);
         }
     }//GEN-LAST:event_bttnExitActionPerformed
-
-    private void bttnViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bttnViewActionPerformed
-        setVisible(true);
-        new View_Available_Apartments().setVisible(true);
-    }//GEN-LAST:event_bttnViewActionPerformed
-
-    private void bttnAdminActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bttnAdminActionPerformed
-        new Admin().setVisible(true);
-    }//GEN-LAST:event_bttnAdminActionPerformed
 
     /**
      * @param args the command line arguments
@@ -180,9 +147,7 @@ public class Home extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bttnAdmin;
-    private javax.swing.JButton bttnCheckin;
     private javax.swing.JButton bttnExit;
-    private javax.swing.JButton bttnView;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables

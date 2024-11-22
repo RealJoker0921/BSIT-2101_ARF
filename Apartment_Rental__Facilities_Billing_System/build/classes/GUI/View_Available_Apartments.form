@@ -49,22 +49,29 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
-                      <Component id="jScrollPane1" min="-2" pref="996" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="1" attributes="0">
+                      <Group type="102" attributes="0">
+                          <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="560" max="-2" attributes="0"/>
+                          <Component id="jButton1" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <Component id="jScrollPane1" min="-2" pref="863" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="19" max="32767" attributes="0"/>
+                  <EmptySpace pref="30" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
-                  <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="30" max="32767" attributes="0"/>
-                  <Component id="jScrollPane1" min="-2" pref="520" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace pref="22" max="32767" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="jButton1" min="-2" max="-2" attributes="0"/>
+                      <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
+                  <Component id="jScrollPane1" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -99,54 +106,94 @@
                   <Font name="Lucida Bright" size="14" style="1"/>
                 </Property>
                 <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                  <Table columnCount="4" rowCount="10">
-                    <Column editable="true" title="Apartment Code" type="java.lang.Object">
-                      <Data value="A101"/>
-                      <Data value="A102"/>
-                      <Data value="A103"/>
-                      <Data value="A104"/>
-                      <Data value="A105"/>
-                      <Data value="A106"/>
-                      <Data value="A107"/>
-                      <Data value="A108"/>
-                      <Data value="A109"/>
-                      <Data value="A110"/>
-                    </Column>
-                    <Column editable="true" title="Bedrooms" type="java.lang.Object">
-                      <Data value="2"/>
-                      <Data value="3"/>
+                  <Table columnCount="4" rowCount="20">
+                    <Column editable="true" title="Room ID" type="java.lang.Object">
                       <Data value="1"/>
                       <Data value="2"/>
                       <Data value="3"/>
                       <Data value="4"/>
-                      <Data value="2"/>
-                      <Data value="1"/>
-                      <Data value="3"/>
-                      <Data value="4"/>
+                      <Data value="5"/>
+                      <Data value="6"/>
+                      <Data value="7"/>
+                      <Data value="8"/>
+                      <Data value="9"/>
+                      <Data value="10"/>
+                      <Data value="11"/>
+                      <Data value="12"/>
+                      <Data value="13"/>
+                      <Data value="14"/>
+                      <Data value="15"/>
+                      <Data value="16"/>
+                      <Data value="17"/>
+                      <Data value="18"/>
+                      <Data value="19"/>
+                      <Data value="20"/>
                     </Column>
-                    <Column editable="true" title="Bathrooms" type="java.lang.Object">
-                      <Data value="2"/>
-                      <Data value="2"/>
+                    <Column editable="true" title="Room Type" type="java.lang.Object">
+                      <Data value="Single"/>
+                      <Data value="Single"/>
+                      <Data value="Single"/>
+                      <Data value="Single"/>
+                      <Data value="Single"/>
+                      <Data value="Double"/>
+                      <Data value="Double"/>
+                      <Data value="Double"/>
+                      <Data value="Double"/>
+                      <Data value="Double"/>
+                      <Data value="Barkada"/>
+                      <Data value="Barkada"/>
+                      <Data value="Barkada"/>
+                      <Data value="Barkada"/>
+                      <Data value="Barkada"/>
+                      <Data value="Family Size"/>
+                      <Data value="Family Size"/>
+                      <Data value="Family Size"/>
+                      <Data value="Family Size"/>
+                      <Data value="Family Size"/>
+                    </Column>
+                    <Column editable="true" title="Room Size" type="java.lang.Object">
                       <Data value="1"/>
                       <Data value="1"/>
-                      <Data value="2"/>
-                      <Data value="3"/>
-                      <Data value="2"/>
                       <Data value="1"/>
+                      <Data value="1"/>
+                      <Data value="1"/>
+                      <Data value="2"/>
+                      <Data value="2"/>
+                      <Data value="2"/>
+                      <Data value="2"/>
                       <Data value="2"/>
                       <Data value="5"/>
+                      <Data value="5"/>
+                      <Data value="5"/>
+                      <Data value="5"/>
+                      <Data value="5"/>
+                      <Data value="8"/>
+                      <Data value="8"/>
+                      <Data value="8"/>
+                      <Data value="8"/>
+                      <Data value="8"/>
                     </Column>
-                    <Column editable="true" title="Available" type="java.lang.Object">
-                      <Data value="Yes/No"/>
-                      <Data value="Yes/No"/>
-                      <Data value="Yes/No"/>
-                      <Data value="Yes/No"/>
-                      <Data value="Yes/No"/>
-                      <Data value="Yes/No"/>
-                      <Data value="Yes/No"/>
-                      <Data value="Yes/No"/>
-                      <Data value="Yes/No"/>
-                      <Data value="Yes/No"/>
+                    <Column editable="true" title="Price" type="java.lang.Object">
+                      <Data value="1000"/>
+                      <Data value="1000"/>
+                      <Data value="1000"/>
+                      <Data value="1000"/>
+                      <Data value="1000"/>
+                      <Data value="2500"/>
+                      <Data value="2500"/>
+                      <Data value="2500"/>
+                      <Data value="2500"/>
+                      <Data value="2500"/>
+                      <Data value="3000"/>
+                      <Data value="3000"/>
+                      <Data value="3000"/>
+                      <Data value="3000"/>
+                      <Data value="3000"/>
+                      <Data value="4000"/>
+                      <Data value="4000"/>
+                      <Data value="4000"/>
+                      <Data value="4000"/>
+                      <Data value="4000"/>
                     </Column>
                   </Table>
                 </Property>
@@ -184,6 +231,17 @@
             </Component>
           </SubComponents>
         </Container>
+        <Component class="javax.swing.JButton" name="jButton1">
+          <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Lucida Bright" size="14" style="1"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="BACK"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton1ActionPerformed"/>
+          </Events>
+        </Component>
       </SubComponents>
     </Container>
   </SubComponents>
