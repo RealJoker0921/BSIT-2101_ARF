@@ -30,37 +30,42 @@ public class View_Available_Apartments extends javax.swing.JFrame {
         loadData();
     }
     public void loadData(){
-        //CustomerCheckin();
-        JFrame frame = new JFrame("Data from Database");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        //String[] columnNames = {"Tenant ID", "First Name", "Last Name", "Gender", "Bed", "No of Pax", "Contact Number", "Room ID", "Check In Date", "Check Out Date", "Room Type"};
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-        //model.addRow(columnNames);
-        JTable table = new JTable(model);
-        model.setRowCount(0);
-    try {
-            Statement stmt = conn.createStatement();
-            String query = "SELECT * FROM rooms WHERE Status = Available";
-            ResultSet rs = stmt.executeQuery(query);
- 
+        model.setRowCount(0); // Clear the table before adding new data
+
+        Statement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            stmt = conn.createStatement();
+            // Corrected SQL query
+            String query = "SELECT `Room ID`, `Room Type`, `Room Size`, `Room Price`, `Status` FROM rooms WHERE `Status` = 'Available'";
+            rs = stmt.executeQuery(query);
+
+            // Populate the table with the query results
             while (rs.next()) {
-                int RoomID = rs.getInt("Room ID");
-                String RoomType = rs.getString("Room Type");
-                int Roomsize = rs.getInt("Room Size");
-                double Price = rs.getDouble("Price");
-                String Status = rs.getString("Status");
-                
-                Object[] rowData = {RoomID,RoomType,Roomsize,Price,Status};
+                int roomID = rs.getInt("Room ID");
+                String roomType = rs.getString("Room Type");
+                int roomSize = rs.getInt("Room Size");
+                double price = rs.getDouble("Room Price");
+                String status = rs.getString("Status");
+
+                Object[] rowData = {roomID, roomType, roomSize, price, status};
                 model.addRow(rowData);
             }
- 
-            rs.close();
-            stmt.close();
-            //conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            // Close resources to prevent memory leaks
+            try {
+                if (rs != null) rs.close();
+                if (stmt != null) stmt.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
-        jScrollPane1.add(table);
+    
+
     }
 
     /**
@@ -160,6 +165,7 @@ public class View_Available_Apartments extends javax.swing.JFrame {
 
     private void bttnexitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bttnexitActionPerformed
         setVisible(false);
+        dispose();
     }//GEN-LAST:event_bttnexitActionPerformed
 
     /**
