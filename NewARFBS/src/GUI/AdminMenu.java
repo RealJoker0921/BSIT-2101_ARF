@@ -3,6 +3,7 @@ package GUI;
 
 import GUI.CustomerCheckin;
 import GUI.PaymentMethod;
+import javax.swing.JOptionPane;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -41,8 +42,11 @@ public class AdminMenu extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         bttnCheckin = new javax.swing.JButton();
         bttnView = new javax.swing.JButton();
-        bttnView1 = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
+        bttnView1 = new javax.swing.JButton();
+        bttnCheckin1 = new javax.swing.JButton();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
 
         jMenu1.setText("File");
@@ -70,7 +74,7 @@ public class AdminMenu extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(211, 211, 211)
                 .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 1390, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(156, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -87,7 +91,7 @@ public class AdminMenu extends javax.swing.JFrame {
 
         bttnCheckin.setFont(new java.awt.Font("Lucida Bright", 1, 18)); // NOI18N
         bttnCheckin.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/check-in-desk.png"))); // NOI18N
-        bttnCheckin.setText("Customer Check In");
+        bttnCheckin.setText("Customer Maintenance");
         bttnCheckin.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 bttnCheckinActionPerformed(evt);
@@ -96,19 +100,10 @@ public class AdminMenu extends javax.swing.JFrame {
 
         bttnView.setFont(new java.awt.Font("Lucida Bright", 1, 18)); // NOI18N
         bttnView.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/hallway (1).png"))); // NOI18N
-        bttnView.setText("View All Apartments");
+        bttnView.setText("View All Available Room");
         bttnView.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 bttnViewActionPerformed(evt);
-            }
-        });
-
-        bttnView1.setFont(new java.awt.Font("Lucida Bright", 1, 18)); // NOI18N
-        bttnView1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/payment-method.png"))); // NOI18N
-        bttnView1.setText("Payment Method");
-        bttnView1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bttnView1ActionPerformed(evt);
             }
         });
 
@@ -120,40 +115,76 @@ public class AdminMenu extends javax.swing.JFrame {
             }
         });
 
+        bttnView1.setFont(new java.awt.Font("Lucida Bright", 1, 18)); // NOI18N
+        bttnView1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/history-book.png"))); // NOI18N
+        bttnView1.setText("Reports");
+        bttnView1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bttnView1ActionPerformed(evt);
+            }
+        });
+
+        bttnCheckin1.setFont(new java.awt.Font("Lucida Bright", 1, 18)); // NOI18N
+        bttnCheckin1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/transaction-history.png"))); // NOI18N
+        bttnCheckin1.setText("Payment History");
+        bttnCheckin1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bttnCheckin1ActionPerformed(evt);
+            }
+        });
+
+        jLabel3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 2));
+
+        jLabel4.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 2));
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(20, 20, 20)
+                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(bttnView1, javax.swing.GroupLayout.PREFERRED_SIZE, 322, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(bttnView, javax.swing.GroupLayout.PREFERRED_SIZE, 322, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addGap(90, 90, 90)
+                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addGap(10, 10, 10)
+                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 322, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(bttnView, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(bttnCheckin, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(bttnView1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addComponent(bttnCheckin1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(bttnCheckin, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 322, Short.MAX_VALUE)))
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(65, 65, 65)
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(97, 97, 97)
-                        .addComponent(jButton1)))
-                .addContainerGap(24, Short.MAX_VALUE))
+                        .addContainerGap()
+                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 322, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(10, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jButton1)
+                .addGap(108, 108, 108))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(27, 27, 27)
+                .addContainerGap()
+                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel2)
-                .addGap(33, 33, 33)
-                .addComponent(bttnCheckin)
-                .addGap(33, 33, 33)
+                .addGap(18, 18, 18)
                 .addComponent(bttnView)
+                .addGap(40, 40, 40)
+                .addComponent(bttnCheckin)
+                .addGap(39, 39, 39)
+                .addComponent(bttnCheckin1)
                 .addGap(34, 34, 34)
                 .addComponent(bttnView1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jButton1)
-                .addGap(43, 43, 43))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(10, 10, 10))
         );
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/Apartment.jpg"))); // NOI18N
@@ -170,7 +201,7 @@ public class AdminMenu extends javax.swing.JFrame {
                         .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 1397, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 6, Short.MAX_VALUE)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -207,21 +238,102 @@ public class AdminMenu extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void bttnCheckinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bttnCheckinActionPerformed
-        new CustomerCheckin().setVisible(true);
+        //new CustomerCheckin().setVisible(true);
+        // Show a confirmation dialog
+        int response = JOptionPane.showConfirmDialog(null, "Are you sure you want to proceed to Customer Maintenance?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+
+        if (response == JOptionPane.YES_OPTION) {
+            System.out.println("User clicked YES. Proceeding to open CustomerCheckin.");
+
+            // Displaying the CustomerCheckin frame
+            try {
+                new CustomerCheckin().setVisible(true);
+                System.out.println("CustomerCheckin is now visible.");
+            } catch (Exception e) {
+                System.err.println("ERROR: Failed to open CustomerCheckin: " + e.getMessage());
+            }
+        } else {
+            System.out.println("User clicked NO. Operation aborted.");
+        }
+
     }//GEN-LAST:event_bttnCheckinActionPerformed
 
     private void bttnViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bttnViewActionPerformed
-        setVisible(true);
-        new View_Available_Apartments().setVisible(true);
-    }//GEN-LAST:event_bttnViewActionPerformed
+        int response = JOptionPane.showConfirmDialog(null, "Are you sure you want to View All Availble?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 
-    private void bttnView1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bttnView1ActionPerformed
-        new PaymentMethod().setVisible(true);
-    }//GEN-LAST:event_bttnView1ActionPerformed
+        if (response == JOptionPane.YES_OPTION) {
+            System.out.println("User clicked YES. Proceeding to make the frame visible.");
+            // Making the current frame visible
+            setVisible(true);
+            System.out.println("Current frame is now visible.");
+
+            // Displaying the View_Available_Apartments frame
+            System.out.println("Attempting to open View_Available_Apartments.");
+            try {
+                new View_Available_Apartments().setVisible(true);
+                System.out.println("View_Available_Apartments is now visible.");
+            } catch (Exception e) {
+                System.err.println("ERROR: Failed to open View_Available_Apartments: " + e.getMessage());
+            }
+        } else {
+            System.out.println("User clicked NO. Operation aborted.");
+            /*setVisible(true);
+            new View_Available_Apartments().setVisible(true);*/
+        }
+        /*setVisible(true);
+        new View_Available_Apartments().setVisible(true);*/
+    }//GEN-LAST:event_bttnViewActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         setVisible(false);
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void bttnView1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bttnView1ActionPerformed
+        //setVisible(true);
+        //new HistoryOfTenants().setVisible(true);
+        // Show a confirmation dialog
+        int response = JOptionPane.showConfirmDialog(null, "Want to proceed to see the reports?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+
+        if (response == JOptionPane.YES_OPTION) {
+            System.out.println("User clicked YES. Proceeding to make the frame visible.");
+
+            // Making the current frame visible
+            setVisible(true);
+            System.out.println("Current frame is now visible.");
+
+            // Displaying the HistoryOfTenants frame
+            System.out.println("Attempting to open HistoryOfTenants.");
+            try {
+                new HistoryOfTenants().setVisible(true);
+                System.out.println("HistoryOfTenants is now visible.");
+            } catch (Exception e) {
+                System.err.println("ERROR: Failed to open HistoryOfTenants: " + e.getMessage());
+            }
+        } else {
+            System.out.println("User clicked NO. Operation aborted.");
+        }
+    }//GEN-LAST:event_bttnView1ActionPerformed
+
+    private void bttnCheckin1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bttnCheckin1ActionPerformed
+        //new HistoryPayments().setVisible(true);
+        // Show a confirmation dialog
+        int response = JOptionPane.showConfirmDialog(null, "Want to proceed to Payment History?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+
+        if (response == JOptionPane.YES_OPTION) {
+            System.out.println("User clicked YES. Proceeding to open HistoryPayments.");
+
+            // Displaying the HistoryPayments frame
+            try {
+                new HistoryPayments().setVisible(true);
+                System.out.println("HistoryPayments is now visible.");
+            } catch (Exception e) {
+                System.err.println("ERROR: Failed to open HistoryPayments: " + e.getMessage());
+            }
+        } else {
+            System.out.println("User clicked NO. Operation aborted.");
+        }
+
+    }//GEN-LAST:event_bttnCheckin1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -260,11 +372,14 @@ public class AdminMenu extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bttnCheckin;
+    private javax.swing.JButton bttnCheckin1;
     private javax.swing.JButton bttnView;
     private javax.swing.JButton bttnView1;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;

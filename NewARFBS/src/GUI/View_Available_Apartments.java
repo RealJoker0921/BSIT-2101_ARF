@@ -1,5 +1,13 @@
 package GUI;
 
+import Connectors.dbconnect;
+import java.sql.Connection;
+import java.sql.Statement;
+import javax.swing.JFrame;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+import java.sql.*;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
@@ -10,12 +18,48 @@ package GUI;
  * @author User
  */
 public class View_Available_Apartments extends javax.swing.JFrame {
-
+        private Connection conn;
+        private String query;
     /**
      * Creates new form View_Available_Apartments
      */
     public View_Available_Apartments() {
         initComponents();
+        dbconnect dbc = new dbconnect();
+        conn = dbc.getConnection();
+        loadData();
+    }
+    
+    public void loadData(){
+        JFrame frame = new JFrame("Data from Database");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        JTable table = new JTable(model);
+        model.setRowCount(0);
+        
+    try{
+        Statement stmt = conn.createStatement();
+        String query = "SELECT * FROM rooms WHERE Status = 'Available'";
+        ResultSet rs = stmt.executeQuery(query);
+        
+        while(rs.next()){
+            int roomID = rs.getInt("RoomID");
+            String bedType = rs.getString("BedType");
+            int roomSize = rs.getInt("RoomSize");
+            int noofOccupants = rs.getInt("NoofAvailableBed");
+            double roomPrice = rs.getDouble("RoomPricePerHead");
+            String roomStatus = rs.getString("Status");
+            
+            Object[] rowData = {roomID, bedType, roomSize, noofOccupants, roomPrice, roomStatus};
+            model.addRow(rowData);
+        }
+            rs.close();
+            stmt.close();
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+        jScrollPane1.add(table);
+
     }
 
     /**
@@ -47,33 +91,14 @@ public class View_Available_Apartments extends javax.swing.JFrame {
         jTable1.setFont(new java.awt.Font("Lucida Bright", 1, 14)); // NOI18N
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                { new Integer(1), "Single", "1",  new Double(1000.0)},
-                { new Integer(2), "Single", "1",  new Double(1000.0)},
-                { new Integer(3), "Single", "1",  new Double(1000.0)},
-                { new Integer(4), "Single", "1",  new Double(1000.0)},
-                { new Integer(5), "Single", "1",  new Double(1000.0)},
-                { new Integer(6), "Double", "2",  new Double(2500.0)},
-                { new Integer(7), "Double", "2",  new Double(2500.0)},
-                { new Integer(8), "Double", "2",  new Double(2500.0)},
-                { new Integer(9), "Double", "2",  new Double(2500.0)},
-                { new Integer(10), "Double", "2",  new Double(2500.0)},
-                { new Integer(11), "Barkada", "5",  new Double(2500.0)},
-                { new Integer(12), "Barkada", "5",  new Double(3000.0)},
-                { new Integer(13), "Barkada", "5",  new Double(3000.0)},
-                { new Integer(14), "Barkada", "5",  new Double(3000.0)},
-                { new Integer(15), "Family Size", "5",  new Double(3000.0)},
-                { new Integer(16), "Family Size", "8",  new Double(3000.0)},
-                { new Integer(17), "Family Size", "8",  new Double(4000.0)},
-                { new Integer(18), "Family Size", "8",  new Double(4000.0)},
-                { new Integer(19), "Family Size", "8",  new Double(4000.0)},
-                { new Integer(20), "Family Size", "8",  new Double(4000.0)}
+
             },
             new String [] {
-                "Room ID", "Room Type", "Room Size", "Price"
+                "Room ID", "Bed Type", "Room Size", "No Of Occupants", "Room Price Per Head", "Status "
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Double.class, java.lang.String.class
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -81,6 +106,11 @@ public class View_Available_Apartments extends javax.swing.JFrame {
             }
         });
         jTable1.setPreferredSize(new java.awt.Dimension(2000, 1000));
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable1MouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(jTable1);
 
         bttnexit.setFont(new java.awt.Font("Lucida Bright", 1, 18)); // NOI18N
@@ -136,6 +166,10 @@ public class View_Available_Apartments extends javax.swing.JFrame {
         setVisible(false);
     }//GEN-LAST:event_bttnexitActionPerformed
 
+    private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTable1MouseClicked
+
     /**
      * @param args the command line arguments
      */
@@ -178,4 +212,5 @@ public class View_Available_Apartments extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
     // End of variables declaration//GEN-END:variables
+
 }

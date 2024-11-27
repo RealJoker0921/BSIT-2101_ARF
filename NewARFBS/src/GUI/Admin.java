@@ -54,17 +54,20 @@ public class Admin extends javax.swing.JFrame {
         jLabel4.setText("Welcome Admin");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setBackground(new java.awt.Color(0, 0, 0));
         setUndecorated(true);
 
-        jPanel1.setBackground(new java.awt.Color(255, 204, 204));
+        jPanel1.setBackground(new java.awt.Color(0, 0, 0));
 
-        jLabel1.setBackground(new java.awt.Color(255, 204, 204));
+        jLabel1.setBackground(new java.awt.Color(255, 255, 255));
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/1000_F_334211134_enN7DZPmOlxMimAGA2Bj662yBNzkTzTy.jpg"))); // NOI18N
-        jLabel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 2));
+        jLabel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255), 2));
 
-        jLabel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 2));
+        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255), 2));
 
-        jPanel2.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel2.setBackground(new java.awt.Color(255, 204, 204));
         jPanel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 2));
 
         jLabel5.setFont(new java.awt.Font("Lucida Bright", 1, 36)); // NOI18N
@@ -175,20 +178,25 @@ public class Admin extends javax.swing.JFrame {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel1)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 364, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 75, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 504, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 69, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 498, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -212,21 +220,28 @@ public class Admin extends javax.swing.JFrame {
 
         if(username.isEmpty()){
             JOptionPane.showMessageDialog(null, "Please Fill out username");
+            System.out.println("Username field is empty.");
         } else if (password.isEmpty()){
             JOptionPane.showMessageDialog(null, "Please Fill out Password");
+            System.out.println("Password field is empty.");
         } else if(username.equals("admin")&& password.equals("admin123")){
             try {
-            Statement stmt= conn.createStatement();
-            String query = "INSERT INTO `apartmentadmin` (`AdminID`, `AdminUser`, `AdminPass`) VALUES (NULL, 'admin', 'admin123')";
-            stmt.execute(query);
-            JOptionPane.showMessageDialog(null, "New Admin Added!", "Adding  Successfully", 0);
+                System.out.println("Attempting to create a statement.");
+                Statement stmt= conn.createStatement();
+                String query = "INSERT INTO `apartmentadmin` (`AdminID`, `AdminUser`, `AdminPass`) VALUES (NULL, 'admin', 'admin123')";
+                stmt.execute(query);
+                JOptionPane.showMessageDialog(null, "Click Ok to proceed the next destination!", "Adding  Successfully", JOptionPane.INFORMATION_MESSAGE);
+                System.out.println("Admin details inserted into apartmentadmin table.");
             } catch (Exception e) {
+                System.out.println("Exception caught: " + e.getMessage());
             }
-            JOptionPane.showMessageDialog(null, "LOG IN SUCCESSFUL");
-            new AdminMenu().setVisible(true);
-            this.setVisible(false);
+                JOptionPane.showMessageDialog(null, "LOG IN SUCCESSFUL");
+                System.out.println("Login successful. Redirecting to AdminMenu.");
+                new AdminMenu().setVisible(true);
+                this.setVisible(false);
         } else {
             JOptionPane.showMessageDialog(null, "Wrong username or password!!", "Message",JOptionPane.WARNING_MESSAGE);
+            System.out.println("Login failed. Wrong username or password.");
         }
     }//GEN-LAST:event_bLoginActionPerformed
 
@@ -240,7 +255,9 @@ public class Admin extends javax.swing.JFrame {
     }//GEN-LAST:event_cPassActionPerformed
 
     private void bExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bExitActionPerformed
-        setVisible(false);
+        System.out.println("Exit button clicked. Hiding the window."); 
+        setVisible(false); 
+        System.out.println("Window is now hidden.");
     }//GEN-LAST:event_bExitActionPerformed
 
     /**
