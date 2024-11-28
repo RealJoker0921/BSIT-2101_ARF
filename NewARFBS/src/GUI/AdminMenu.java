@@ -91,7 +91,7 @@ public class AdminMenu extends javax.swing.JFrame {
 
         bttnCheckin.setFont(new java.awt.Font("Lucida Bright", 1, 18)); // NOI18N
         bttnCheckin.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/check-in-desk.png"))); // NOI18N
-        bttnCheckin.setText("Customer Maintenance");
+        bttnCheckin.setText("Tenant Maintenance");
         bttnCheckin.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 bttnCheckinActionPerformed(evt);

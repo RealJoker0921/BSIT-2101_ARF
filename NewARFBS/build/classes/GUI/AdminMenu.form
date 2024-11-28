@@ -234,7 +234,7 @@
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/Image/check-in-desk.png"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Customer Maintenance"/>
+                <Property name="text" type="java.lang.String" value="Tenant Maintenance"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bttnCheckinActionPerformed"/>

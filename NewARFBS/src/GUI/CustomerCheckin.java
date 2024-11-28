@@ -291,7 +291,7 @@ public class CustomerCheckin extends javax.swing.JFrame {
 
         jLabel4.setFont(new java.awt.Font("Lucida Bright", 1, 18)); // NOI18N
         jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/check-in-desk.png"))); // NOI18N
-        jLabel4.setText("Customer Maintenance");
+        jLabel4.setText("Tenant Maintenance");
 
         bttnexit.setFont(new java.awt.Font("Lucida Bright", 1, 18)); // NOI18N
         bttnexit.setText("Back");
@@ -368,7 +368,7 @@ public class CustomerCheckin extends javax.swing.JFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel4)
-                        .addGap(258, 258, 258)
+                        .addGap(284, 284, 284)
                         .addComponent(bttnexit)
                         .addGap(12, 12, 12))
                     .addGroup(jPanel2Layout.createSequentialGroup()
@@ -509,99 +509,87 @@ public class CustomerCheckin extends javax.swing.JFrame {
         String sGender = (String) CboxGender.getSelectedItem();
         String sBed = (String) Cboxtype.getSelectedItem();
         String sRoomType = (String) CbRoomtype.getSelectedItem();
-        
-        JOptionPane.showConfirmDialog(null, "Are you sure you want to proceed with the check-in?", "Confirm Check-In", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-    try{
-        int RoomID = Integer.parseInt(sRID);
-        int maxOccupants = 0;
-        
-        // Determine the maximum number of occupants based on room type
-        switch (sBed) {
-            case "Single":
-                maxOccupants = 1;
-                break;
-            case "Double":
-                maxOccupants = 2;
-                break;
-            case "Group":
-                maxOccupants = 4;
-                break;
-            default:
-                JOptionPane.showMessageDialog(null, "Invalid Room Type!", "Room Error", JOptionPane.ERROR_MESSAGE);
-                return;
-        }
 
-        try (Connection connect = dbconnect.getConnection()) {
-        // Check the room's availability and current number of occupants
-            String checkRoomQuery = "SELECT Status, NoofAvailableBed FROM rooms WHERE RoomID = ?";
-            PreparedStatement checkRoomStmt = connect.prepareStatement(checkRoomQuery);
-            checkRoomStmt.setInt(1, RoomID);
-            ResultSet rs = checkRoomStmt.executeQuery();
-            
+        // Show a confirmation dialog and store the user's response
+        int response = JOptionPane.showConfirmDialog(null, "Are you sure you want to proceed with the check-in?", "Confirm Check-In", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 
-            if (rs.next()) {
-                String roomStatus = rs.getString("Status");
-                int currentAvailableBeds = rs.getInt("NoofAvailableBed");
+        if (response == JOptionPane.YES_OPTION) {
+            try {
+                int RoomID = Integer.parseInt(sRID);
+                int requiredBeds = 1; // This assumes one tenant per check-in
 
-                // Check if room is available
-                if (roomStatus.equals("Occupied") || currentAvailableBeds <= 0) {
-                    JOptionPane.showMessageDialog(null, "Room is full or not available!", "Room Error", JOptionPane.ERROR_MESSAGE);
-                    return; // Exit if the room is full or not available
+                try (Connection connect = dbconnect.getConnection()) {
+                    // Check the room's availability and current number of occupants
+                    String checkRoomQuery = "SELECT Status, NoofAvailableBed FROM rooms WHERE RoomID = ?";
+                    PreparedStatement checkRoomStmt = connect.prepareStatement(checkRoomQuery);
+                    checkRoomStmt.setInt(1, RoomID);
+                    ResultSet rs = checkRoomStmt.executeQuery();
+
+                    if (rs.next()) {
+                        String roomStatus = rs.getString("Status");
+                        int currentAvailableBeds = rs.getInt("NoofAvailableBed");
+
+                        // Check if room is available
+                        if (roomStatus.equals("Occupied") || currentAvailableBeds <= 0) {
+                            JOptionPane.showMessageDialog(null, "Room is full or not available!", "Room Error", JOptionPane.ERROR_MESSAGE);
+                            return; // Exit if the room is full or not available
+                        }
+
+                        // Check if the room has enough available beds for the required occupants
+                        if (currentAvailableBeds < requiredBeds) {
+                            JOptionPane.showMessageDialog(null, "Room does not have enough available beds for the selected occupancy!", "Occupancy Error", JOptionPane.ERROR_MESSAGE);
+                            return;
+                        }
+
+                        // Update the room's available beds
+                        currentAvailableBeds -= requiredBeds; // Decrease available beds by the number of people checking in
+                        String newStatus = (currentAvailableBeds == 0) ? "Occupied" : "Available";
+
+                        String updateRoomQuery = "UPDATE rooms SET NoofAvailableBed = ?, Status = ? WHERE RoomID = ?";
+                        PreparedStatement updateRoomStmt = connect.prepareStatement(updateRoomQuery);
+                        updateRoomStmt.setInt(1, currentAvailableBeds);
+                        updateRoomStmt.setString(2, newStatus);
+                        updateRoomStmt.setInt(3, RoomID);
+                        updateRoomStmt.executeUpdate();
+
+                        // Insert the tenant data into the database
+                        String query = "INSERT INTO customertenants (TenantName, LastName, Gender, Bed, ContactNumber, RoomID, CheckInDate, CheckOutDate, RoomType) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                        PreparedStatement pstmt = connect.prepareStatement(query);
+                        pstmt.setString(1, sTname);
+                        pstmt.setString(2, sLname);
+                        pstmt.setString(3, sGender);
+                        pstmt.setString(4, sBed);
+                        pstmt.setString(5, sContact);
+                        pstmt.setInt(6, RoomID);
+                        pstmt.setString(7, sCID);
+                        pstmt.setString(8, sCOD);
+                        pstmt.setString(9, sRoomType);
+                        pstmt.executeUpdate();
+
+                        JOptionPane.showMessageDialog(null, "Check-in successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                        loadData();
+                        // Clear the input fields
+                        txtTenantName.setText("");
+                        txtLname.setText("");
+                        CboxGender.setSelectedItem("Male");
+                        Cboxtype.setSelectedItem("Single");
+                        txtContactNum.setText("");
+                        txtRoomID.setText("");
+                        txtcheckin.setText("");
+                        txtcheckout.setText("");
+                        CbRoomtype.setSelectedItem("AC");
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Room ID does not exist!", "Room Error", JOptionPane.ERROR_MESSAGE);
+                    }
                 }
-
-                // Check if the room has enough available beds for maxOccupants
-                if (currentAvailableBeds < maxOccupants) {
-                    JOptionPane.showMessageDialog(null, "Room does not have enough available beds for the selected occupancy!", "Occupancy Error", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-
-                // Update the room's available beds
-                currentAvailableBeds -= maxOccupants; // Decrease available beds by the number of people checking in
-                String newStatus = (currentAvailableBeds == 0) ? "Occupied" : "Available";
-
-                String updateRoomQuery = "UPDATE rooms SET NoofAvailableBed = ?, Status = ? WHERE RoomID = ?";
-                PreparedStatement updateRoomStmt = connect.prepareStatement(updateRoomQuery);
-                updateRoomStmt.setInt(1, currentAvailableBeds);
-                updateRoomStmt.setString(2, newStatus);
-                updateRoomStmt.setInt(3, RoomID);
-                updateRoomStmt.executeUpdate();
-
-                // Insert the tenant data into the database
-                String query = "INSERT INTO `customertenants` (`TenantID`, `TenantName`, `LastName`, `Gender`, `Bed`, `ContactNumber`, `RoomID`, `CheckInDate`, `CheckOutDate`, `RoomType`) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-                PreparedStatement pstmt = connect.prepareStatement(query);
-                pstmt.setString(1, sTname);
-                pstmt.setString(2, sLname);
-                pstmt.setString(3, sGender);
-                pstmt.setString(4, sBed);
-                pstmt.setString(5, sContact);
-                pstmt.setInt(6, RoomID);
-                pstmt.setString(7, sCID);
-                pstmt.setString(8, sCOD);
-                pstmt.setString(9, sRoomType);
-                pstmt.executeUpdate();
-
-                JOptionPane.showMessageDialog(null, "Check-in successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
-                loadData();
-                // Clear the input fields
-                txtTenantName.setText("");
-                txtLname.setText("");
-                CboxGender.setSelectedItem("Male");
-                Cboxtype.setSelectedItem("Single");
-                txtContactNum.setText("");
-                txtRoomID.setText("");
-                txtcheckin.setText("");
-                txtcheckout.setText("");
-                CbRoomtype.setSelectedItem("AC");
-            } else {
-                JOptionPane.showMessageDialog(null, "Room ID does not exist!", "Room Error", JOptionPane.ERROR_MESSAGE);
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(null, "An error occurred during check-in!", "Error", JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(null, "Room ID must be a number!", "Input Error", JOptionPane.ERROR_MESSAGE);
             }
         }
-    } catch (SQLException e) {
-        JOptionPane.showMessageDialog(null, "An error occurred during check-in!", "Error", JOptionPane.ERROR_MESSAGE);
-        e.printStackTrace();
-    } catch (NumberFormatException e) {
-        JOptionPane.showMessageDialog(null, "Room ID must be a number!", "Input Error", JOptionPane.ERROR_MESSAGE);
-    }
+
     }//GEN-LAST:event_bCheckinActionPerformed
 
     private void bDelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bDelActionPerformed
@@ -680,45 +668,160 @@ public class CustomerCheckin extends javax.swing.JFrame {
         String sGender = (String) CboxGender.getSelectedItem();
         String sBed = (String) Cboxtype.getSelectedItem();
         String sRoomType = (String) CbRoomtype.getSelectedItem();
-        
-        JOptionPane.showConfirmDialog(null, "Are you sure you want to update this customer information?", "Confirm Update", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-        
-        try {
-            int TenantID = Integer.parseInt(sTid);
-            
-            Connection connect = dbconnect.getConnection();
-            String query = "UPDATE customertenants SET TenantName = ?, LastName = ?, Gender = ?, Bed = ?, ContactNumber = ?, RoomID = ?, CheckInDate = ?, CheckOutDate = ?, RoomType = ? WHERE TenantID = ?";
-            PreparedStatement updateCustomerStmt = connect.prepareStatement(query);
-            updateCustomerStmt.setString(1, sTname);
-            updateCustomerStmt.setString(2, sLname);
-            updateCustomerStmt.setString(3, sGender);
-            updateCustomerStmt.setString(4, sBed);
-            updateCustomerStmt.setString(5, sContact);
-            updateCustomerStmt.setString(6, sRID);
-            updateCustomerStmt.setString(7, sCID);
-            updateCustomerStmt.setString(8, sCOD);
-            updateCustomerStmt.setString(9, sRoomType);
-            updateCustomerStmt.setInt(10, TenantID);
-            updateCustomerStmt.executeUpdate();
-            loadData();
-            
-            JOptionPane.showMessageDialog(null, "Customer Maintenance Updated!", "Updating Successfully", 0);
-            
-            txtTenantName.setText("");
-            txtLname.setText("");
-            CboxGender.setSelectedItem("Male");
-            Cboxtype.setSelectedItem("Single");
-            txtContactNum.setText("");
-            txtRoomID.setText("");
-            txtcheckin.setText("");
-            txtcheckout.setText("");
-            CbRoomtype.setSelectedItem("AC");
-            
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Updating Unsuccessfully!", "Customer Maintenance Error!", 0);
-            e.printStackTrace();
-        }   
+
+        int confirm = JOptionPane.showConfirmDialog(null, 
+            "Are you sure you want to update this tenant?", 
+            "Confirm update", 
+            JOptionPane.YES_NO_OPTION);
+
+        if (confirm == JOptionPane.YES_OPTION) {
+            try {
+                int TenantID = Integer.parseInt(sTid);
+                Connection connect = dbconnect.getConnection();
+
+                // Step 1: Get the current bed type and available bed count for the tenant before updating
+                String currentBedTypeQuery = "SELECT Bed, RoomID FROM customertenants WHERE TenantID = ?";
+                PreparedStatement currentBedStmt = connect.prepareStatement(currentBedTypeQuery);
+                currentBedStmt.setInt(1, TenantID);
+                ResultSet currentBedRs = currentBedStmt.executeQuery();
+
+                String currentBed = null;
+                int currentRoomID = 0;
+                if (currentBedRs.next()) {
+                    currentBed = currentBedRs.getString("Bed");
+                    currentRoomID = currentBedRs.getInt("RoomID");
+                }
+
+                // Step 2: Get the current available bed count for the room
+                int currentAvailableBeds = getAvailableBeds(connect, currentRoomID);
+
+                // Step 3: Convert bed types to bed counts
+                int oldBedCount = getBedCount(currentBed);
+                int newBedCount = getBedCount(sBed);
+
+                // Prevent changing to Group if available beds are less than 4
+                if (sBed.equals("Group") && currentAvailableBeds < 4) {
+                    JOptionPane.showMessageDialog(null, "Insufficient available beds for Group bed type!", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                // Step 4: Update the tenant details in customertenants table
+                String query = "UPDATE customertenants SET TenantName = ?, LastName = ?, Gender = ?, Bed = ?, ContactNumber = ?, RoomID = ?, CheckInDate = ?, CheckOutDate = ?, RoomType = ? WHERE TenantID = ?";
+                PreparedStatement updateCustomerStmt = connect.prepareStatement(query);
+                updateCustomerStmt.setString(1, sTname);
+                updateCustomerStmt.setString(2, sLname);
+                updateCustomerStmt.setString(3, sGender);
+                updateCustomerStmt.setString(4, sBed);
+                updateCustomerStmt.setString(5, sContact);
+                updateCustomerStmt.setString(6, sRID);
+                updateCustomerStmt.setString(7, sCID);
+                updateCustomerStmt.setString(8, sCOD);
+                updateCustomerStmt.setString(9, sRoomType);
+                updateCustomerStmt.setInt(10, TenantID);
+                updateCustomerStmt.executeUpdate();
+
+                // Step 5: Update available bed count based on the bed type change
+                updateAvailableBeds(connect, currentRoomID, oldBedCount, newBedCount);
+
+                // Step 6: Check if the available beds have reached 0, then update the room status to "Occupied"
+                currentAvailableBeds = getAvailableBeds(connect, currentRoomID); // Re-check after the update
+                if (currentAvailableBeds == 0) {
+                    setRoomStatus(connect, currentRoomID, "Occupied");
+                } else if (currentAvailableBeds > 0) {
+                    setRoomStatus(connect, currentRoomID, "Available");
+                }
+
+                // Reload data if necessary
+                loadData();
+                JOptionPane.showMessageDialog(null, "Customer Maintenance Updated!", "Updating Successfully", 0);
+
+                // Reset the form fields after update
+                resetFormFields();
+
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, "Updating Unsuccessfully!", "Customer Maintenance Error!", 0);
+                e.printStackTrace();
+            }
+        }
     }//GEN-LAST:event_bttnUpdateActionPerformed
+
+    // Helper method to get available bed count in the room
+    private int getAvailableBeds(Connection connect, int roomID) throws SQLException {
+        String getRoomQuery = "SELECT NoofAvailableBed FROM rooms WHERE RoomID = ?";
+        PreparedStatement getRoomStmt = connect.prepareStatement(getRoomQuery);
+        getRoomStmt.setInt(1, roomID);
+        ResultSet rs = getRoomStmt.executeQuery();
+
+        if (rs.next()) {
+            return rs.getInt("NoofAvailableBed");
+        }
+        return 0;
+    }
+
+// Helper method to convert bed type to bed count
+    private int getBedCount(String bedType) {
+        switch (bedType) {
+            case "Single":
+                return 1;
+            case "Double":
+                return 2;
+            case "Group":
+                return 4;
+            default:
+                return 0;
+        }
+    }
+
+// Helper method to update available beds in the rooms table
+    private void updateAvailableBeds(Connection connect, int roomID, int oldBedCount, int newBedCount) throws SQLException {
+        // Calculate bed difference (if new bed type requires more beds, we decrement available beds, otherwise we add)
+        int bedDifference = newBedCount - oldBedCount;
+
+        String getRoomQuery = "SELECT NoofAvailableBed FROM rooms WHERE RoomID = ?";
+        PreparedStatement getRoomStmt = connect.prepareStatement(getRoomQuery);
+        getRoomStmt.setInt(1, roomID);
+        ResultSet rs = getRoomStmt.executeQuery();
+
+        if (rs.next()) {
+            int currentAvailableBeds = rs.getInt("NoofAvailableBed");
+            int newAvailableBeds = currentAvailableBeds - bedDifference;
+
+            // If the new available beds count goes negative, we revert the operation
+            if (newAvailableBeds < 0) {
+                JOptionPane.showMessageDialog(null, "Not enough available space for the selected bed type!", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // Update the available bed count in the rooms table
+            String updateRoomQuery = "UPDATE rooms SET NoofAvailableBed = ? WHERE RoomID = ?";
+            PreparedStatement updateRoomStmt = connect.prepareStatement(updateRoomQuery);
+            updateRoomStmt.setInt(1, newAvailableBeds);
+            updateRoomStmt.setInt(2, roomID);
+            updateRoomStmt.executeUpdate();
+        }
+}
+
+    // Helper method to set the room status (Available/Occupied)
+    private void setRoomStatus(Connection connect, int roomID, String status) throws SQLException {
+        String updateStatusQuery = "UPDATE rooms SET Status = ? WHERE RoomID = ?";
+        PreparedStatement updateStatusStmt = connect.prepareStatement(updateStatusQuery);
+        updateStatusStmt.setString(1, status);
+        updateStatusStmt.setInt(2, roomID);
+        updateStatusStmt.executeUpdate();
+    }
+
+    // Reset form fields after update
+    private void resetFormFields() {
+        txtTenantName.setText("");
+        txtLname.setText("");
+        CboxGender.setSelectedItem("Male");
+        Cboxtype.setSelectedItem("Single");
+        txtContactNum.setText("");
+        txtRoomID.setText("");
+        txtcheckin.setText("");
+        txtcheckout.setText("");
+        CbRoomtype.setSelectedItem("AC");
+    }
 
     private void bttnSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bttnSearchActionPerformed
         String tenantID = txtTenantID.getText(); // Retrieve TenantID from the text field

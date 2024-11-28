@@ -297,111 +297,157 @@ public class PaymentMethod extends javax.swing.JFrame {
     private void PaymentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_PaymentActionPerformed
         String sTid = txtTenantID.getText();  
         String sPaymentAmount = txtPaymentAmount.getText(); 
-        
-        JOptionPane.showConfirmDialog(null, "Are you sure you want to proceed with this payment?", "Confirm Payment", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-        
-        try {
-            double paymentAmount = Double.parseDouble(sPaymentAmount);
 
-            try (Connection connect = dbconnect.getConnection()) {
+        // Show a confirmation dialog and store the user's response
+        int response = JOptionPane.showConfirmDialog(null, "Are you sure you want to proceed with this payment?", "Confirm Payment", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 
-                // Query to fetch tenant and room details
-                String query = "SELECT TenantID, TenantName, LastName, Gender, Bed, ContactNumber, RoomID, CheckInDate, CheckOutDate, RoomType FROM customertenants WHERE TenantID = ?";
-                PreparedStatement stmt = connect.prepareStatement(query);
-                stmt.setInt(1, Integer.parseInt(sTid));
-                ResultSet rs = stmt.executeQuery();
+        if (response == JOptionPane.YES_OPTION) {
+            System.out.println("User clicked YES. Proceeding with payment.");
 
-                if (rs.next()) {
-                    int tenantID = rs.getInt("TenantID");
-                    String tenantName = rs.getString("TenantName");
-                    String lastName = rs.getString("LastName");
-                    String gender = rs.getString("Gender");
-                    String bed = rs.getString("Bed");
-                    String contactNumber = rs.getString("ContactNumber");
-                    int roomID = rs.getInt("RoomID");
-                    Date checkInDate = rs.getDate("CheckInDate");
-                    Date checkOutDate = rs.getDate("CheckOutDate");
-                    String roomType = rs.getString("RoomType");
+            try {
+                double paymentAmount = Double.parseDouble(sPaymentAmount);
 
-                    // Calculate the number of days stayed
-                    long diffInMillies = Math.abs(checkOutDate.getTime() - checkInDate.getTime());
-                    long daysStayed = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+                try (Connection connect = dbconnect.getConnection()) {
+                    // Query to fetch tenant and room details
+                    String query = "SELECT TenantID, TenantName, LastName, Gender, Bed, ContactNumber, RoomID, CheckInDate, CheckOutDate, RoomType FROM customertenants WHERE TenantID = ?";
+                    PreparedStatement stmt = connect.prepareStatement(query);
+                    stmt.setInt(1, Integer.parseInt(sTid));
+                    ResultSet rs = stmt.executeQuery();
 
-                    // Fetch the room price
-                    String roomQuery = "SELECT RoomPricePerHead FROM rooms WHERE RoomID = ?";
-                    PreparedStatement roomStmt = connect.prepareStatement(roomQuery);
-                    roomStmt.setInt(1, roomID);
-                    ResultSet roomRs = roomStmt.executeQuery();
-                    double roomPrice = 0.0;
-                    if (roomRs.next()) {
-                        roomPrice = roomRs.getDouble("RoomPricePerHead");
+                    if (rs.next()) {
+                        int tenantID = rs.getInt("TenantID");
+                        String tenantName = rs.getString("TenantName");
+                        String lastName = rs.getString("LastName");
+                        String gender = rs.getString("Gender");
+                        String bed = rs.getString("Bed");
+                        String contactNumber = rs.getString("ContactNumber");
+                        int roomID = rs.getInt("RoomID");
+                        Date checkInDate = rs.getDate("CheckInDate");
+                        Date checkOutDate = rs.getDate("CheckOutDate");
+                        String roomType = rs.getString("RoomType");
+
+                        // Calculate the number of days stayed
+                        long diffInMillies = Math.abs(checkOutDate.getTime() - checkInDate.getTime());
+                        long daysStayed = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+
+                        // Fetch the room price
+                        String roomQuery = "SELECT RoomPricePerHead FROM rooms WHERE RoomID = ?";
+                        PreparedStatement roomStmt = connect.prepareStatement(roomQuery);
+                        roomStmt.setInt(1, roomID);
+                        ResultSet roomRs = roomStmt.executeQuery();
+
+                        double roomPrice = 0.0;
+                        if (roomRs.next()) {
+                            roomPrice = roomRs.getDouble("RoomPricePerHead");
+                        }
+
+                        // Adjust room price based on bed type
+                        if ("Single".equalsIgnoreCase(bed)) {
+                            roomPrice *= 1;  // Price for Single bed (no change)
+                        } else if ("Double".equalsIgnoreCase(bed)) {
+                            roomPrice *= 2;  // Price for Double bed (multiply by 2)
+                        } else if ("Group".equalsIgnoreCase(bed)) {
+                            roomPrice *= 4;  // Price for Group bed (multiply by 4, or any appropriate multiplier)
+                        }
+
+                        // Calculate total room price based on days stayed
+                        double totalRoomPrice = roomPrice * daysStayed;
+
+                        // Calculate water and electricity bills
+                        double waterBillPerDay = 15.0;  // Example: 15 PHP per day for water
+                        double electricityBillPerDay = 40.0;  // Example: 40 PHP per day for electricity
+                        double totalWaterBill = waterBillPerDay * daysStayed;
+                        double totalElectricityBill = electricityBillPerDay * daysStayed;
+                        double newTotalAmount = totalRoomPrice + totalWaterBill + totalElectricityBill;
+
+                        // Check if the tenant has already made a payment
+                        String paymentCheckQuery = "SELECT TotalAmount, PaymentAmount FROM payments WHERE TenantID = ?";
+                        PreparedStatement paymentCheckStmt = connect.prepareStatement(paymentCheckQuery);
+                        paymentCheckStmt.setInt(1, tenantID);
+                        ResultSet paymentRs = paymentCheckStmt.executeQuery();
+
+                        double previousTotalAmount = 0.0;
+                        double previousPayment = 0.0;
+
+                        if (paymentRs.next()) {
+                            previousTotalAmount = paymentRs.getDouble("TotalAmount");
+                            previousPayment = paymentRs.getDouble("PaymentAmount");
+                        }
+
+                        // Calculate the additional amount required based on new and previous totals
+                        double additionalAmount = newTotalAmount - previousTotalAmount;
+
+                        if (paymentAmount < additionalAmount) {
+                            JOptionPane.showMessageDialog(null, "No additional payment is required.", "Payment Info", JOptionPane.INFORMATION_MESSAGE);
+                            return;
+                        }
+
+                        // Check if the payment is sufficient for the additional amount
+                        //if (paymentAmount < additionalAmount) {
+                        //    JOptionPane.showMessageDialog(null, "Insufficient payment! The additional amount required is: " + additionalAmount + " PHP", "Payment Error", JOptionPane.ERROR_MESSAGE);
+                         //   return;
+                        //}
+
+                        // Calculate the change
+                        double change = paymentAmount - additionalAmount;
+
+                        // Insert the new payment difference into the database
+                        String receiptQuery = "INSERT INTO payments (TenantID, RoomID, CheckInDate, CheckOutDate, RoomPrice, WaterBill, ElectricityBill, TotalAmount, PaymentAmount, ChangeAmount, PaymentDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                        PreparedStatement receiptStmt = connect.prepareStatement(receiptQuery);
+                        receiptStmt.setInt(1, tenantID);
+                        receiptStmt.setInt(2, roomID);
+                        receiptStmt.setDate(3, new java.sql.Date(checkInDate.getTime()));
+                        receiptStmt.setDate(4, new java.sql.Date(checkOutDate.getTime()));
+                        receiptStmt.setDouble(5, totalRoomPrice);
+                        receiptStmt.setDouble(6, totalWaterBill);
+                        receiptStmt.setDouble(7, totalElectricityBill);
+                        receiptStmt.setDouble(8, newTotalAmount);
+                        receiptStmt.setDouble(9, paymentAmount);
+                        receiptStmt.setDouble(10, change);
+                        receiptStmt.setDate(11, new java.sql.Date(System.currentTimeMillis()));
+                        receiptStmt.executeUpdate();
+
+                        // Show the receipt with tenant details
+                        String receiptMessage = "Additional Payment Received!\n\n" +
+                                "================= Tenant Details =================\n" +
+                                "Tenant ID: " + tenantID + "\n" +
+                                "Tenant Name: " + tenantName + " " + lastName + "\n" +
+                                "Gender: " + gender + "\n" +
+                                "Bed Type: " + bed + "\n" +
+                                "Contact Number: " + contactNumber + "\n" +
+                                "Room ID: " + roomID + "\n" +
+                                "Check-in Date: " + checkInDate + "\n" +
+                                "Check-out Date: " + checkOutDate + "\n" +
+                                "Room Type: " + roomType + "\n\n" +
+                                "================ Previous Payment =================\n" +
+                                "Previous Total Amount: " + previousTotalAmount + " PHP\n" +
+                                "Previous Payment: " + previousPayment + " PHP\n\n" +
+                                "================= New Payment =====================\n" +
+                                "Updated Room Price: " + totalRoomPrice + " PHP\n" +
+                                "Updated Water Bill: " + totalWaterBill + " PHP\n" +
+                                "Updated Electricity Bill: " + totalElectricityBill + " PHP\n" +
+                                "New Total Amount: " + newTotalAmount + " PHP\n" +
+                                "Additional Amount Required: " + additionalAmount + " PHP\n" +
+                                "Payment Received: " + paymentAmount + " PHP\n" +
+                                "Change: " + change + " PHP\n" +
+                                "===================================================";
+
+                        JOptionPane.showMessageDialog(null, receiptMessage, "Receipt", JOptionPane.INFORMATION_MESSAGE);
+                        txtPaymentAmount.setText("");
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Tenant not found!", "Error", JOptionPane.ERROR_MESSAGE);
                     }
-
-                    // Calculate water and electricity bills
-                    double waterBill = 15.0; // 15 PHP per day
-                    double electricityBill = 40.0; // 40 PHP per day
-                    double totalRoomPrice = roomPrice * daysStayed;
-                    double totalWaterBill = waterBill * daysStayed;
-                    double totalElectricityBill = electricityBill * daysStayed;
-                    double totalAmount = totalRoomPrice + totalWaterBill + totalElectricityBill;
-
-                    // Check if the payment is sufficient
-                    if (paymentAmount < totalAmount) {
-                        JOptionPane.showMessageDialog(null, "Insufficient payment! The total amount is: " + totalAmount + " PHP", "Payment Error", JOptionPane.ERROR_MESSAGE);
-                        return;
-                    }
-
-                    // Calculate change
-                    double change = paymentAmount - totalAmount;
-
-                    // Insert the payment and receipt into the database
-                    String receiptQuery = "INSERT INTO payments (TenantID, RoomID, CheckInDate, CheckOutDate, RoomPrice, WaterBill, ElectricityBill, TotalAmount, PaymentAmount, ChangeAmount, PaymentDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-                    PreparedStatement receiptStmt = connect.prepareStatement(receiptQuery);
-                    receiptStmt.setInt(1, tenantID);
-                    receiptStmt.setInt(2, roomID);
-                    receiptStmt.setDate(3, new java.sql.Date(checkInDate.getTime()));
-                    receiptStmt.setDate(4, new java.sql.Date(checkOutDate.getTime()));
-                    receiptStmt.setDouble(5, totalRoomPrice);
-                    receiptStmt.setDouble(6, totalWaterBill);
-                    receiptStmt.setDouble(7, totalElectricityBill);
-                    receiptStmt.setDouble(8, totalAmount);
-                    receiptStmt.setDouble(9, paymentAmount);
-                    receiptStmt.setDouble(10, change);
-                    receiptStmt.setDate(11, new java.sql.Date(System.currentTimeMillis()));
-                    receiptStmt.executeUpdate();
-
-                    // Show receipt with tenant details
-                    String receiptMessage = "Payment received!\n" +
-                            "Tenant ID: " + tenantID + "\n" +
-                            "Tenant Name: " + tenantName + " " + lastName + "\n" +
-                            "Gender: " + gender + "\n" +
-                            "Bed Type: " + bed + "\n" +
-                            "Contact Number: " + contactNumber + "\n" +
-                            "Room ID: " + roomID + "\n" +
-                            "Check-in Date: " + checkInDate + "\n" +
-                            "Check-out Date: " + checkOutDate + "\n" +
-                            "Room Type: " + roomType + "\n\n" +
-                            "Room Price: " + totalRoomPrice + " PHP\n" +
-                            "Water Bill: " + totalWaterBill + " PHP\n" +
-                            "Electricity Bill: " + totalElectricityBill + " PHP\n" +
-                            "Total Amount: " + totalAmount + " PHP\n" +
-                            "Paid: " + paymentAmount + " PHP\n" +
-                            "Change: " + change + " PHP";
-
-                    JOptionPane.showMessageDialog(null, receiptMessage, "Receipt", JOptionPane.INFORMATION_MESSAGE);
-
-                    txtPaymentAmount.setText("");
-                } else {
-                    JOptionPane.showMessageDialog(null, "Tenant not found!", "Error", JOptionPane.ERROR_MESSAGE);
                 }
-
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(null, "Error processing payment!", "Payment Error", JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(null, "Payment must be a valid number!", "Input Error", JOptionPane.ERROR_MESSAGE);
             }
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Error processing payment!", "Payment Error", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(null, "Payment must be a valid number!", "Input Error", JOptionPane.ERROR_MESSAGE);
+        } else {
+            System.out.println("User clicked NO. Operation aborted.");
         }
+
     }//GEN-LAST:event_PaymentActionPerformed
 
     private void bttnClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bttnClearActionPerformed
@@ -410,9 +456,10 @@ public class PaymentMethod extends javax.swing.JFrame {
     }//GEN-LAST:event_bttnClearActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-       String tenantIDText = txtTenantID.getText();
+        // Get tenant ID from text field (txtTenantID is the text field for tenant ID)
+        String tenantIDText = txtTenantID.getText();
 
-    // Validate tenant ID input
+        // Validate tenant ID input
         if (tenantIDText.isEmpty()) {
             JOptionPane.showMessageDialog(null, "Please enter a Tenant ID.", "Input Error", JOptionPane.ERROR_MESSAGE);
             return; // Exit if no tenant ID is entered

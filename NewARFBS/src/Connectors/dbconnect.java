@@ -9,7 +9,7 @@ import javax.swing.JOptionPane;
 
 
 public class dbconnect {
-    private static String url = "jdbc:mysql://localhost:3306/arf";
+    private static String url = "jdbc:mysql://localhost:3306/arfbs";
     private static String user = "root";
     private static String pass = "";
     
@@ -20,7 +20,7 @@ public class dbconnect {
         connect = null;
         try{
             connect = DriverManager.getConnection(url,user,pass);
-            JOptionPane.showMessageDialog(null, "Connected SuccessFully", "", 0);
+            //JOptionPane.showMessageDialog(null, "Connected SuccessFully", "", 0);
         }
         catch(Exception e){
             JOptionPane.showMessageDialog(null, e);

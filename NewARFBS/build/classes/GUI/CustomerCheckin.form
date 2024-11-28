@@ -160,7 +160,7 @@
                           <Group type="102" alignment="1" attributes="0">
                               <EmptySpace max="32767" attributes="0"/>
                               <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace min="-2" pref="258" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="284" max="-2" attributes="0"/>
                               <Component id="bttnexit" min="-2" max="-2" attributes="0"/>
                               <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
                           </Group>
@@ -652,7 +652,7 @@
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/Image/check-in-desk.png"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Customer Maintenance"/>
+                <Property name="text" type="java.lang.String" value="Tenant Maintenance"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JButton" name="bttnexit">
