@@ -3,35 +3,26 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package GUI;
+
 import Connectors.dbconnect;
 import java.sql.Connection;
-import java.sql.*;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 import javax.swing.JOptionPane;
-import javax.swing.JTextField;
-import java.sql.Date;  // for SQL Date (for check-in and check-out dates)
-
+import javax.swing.table.DefaultTableModel;
+import java.sql.*;
 
 /**
  *
  * @author User
  */
 public class PaymentMethod extends javax.swing.JFrame {
-    Connection conn;
-    PreparedStatement pst;
-    ResultSet rs;
-
+        private Connection conn;
+        private String query;
+        private String updateCustomerQuery;
     /**
      * Creates new form PaymentMethod
      */
@@ -39,8 +30,65 @@ public class PaymentMethod extends javax.swing.JFrame {
         initComponents();
         dbconnect dbc = new dbconnect();
         conn = dbc.getConnection();
+        loadData(1);
     }
+    
+    public void loadData(int tenantID) {
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        model.setRowCount(0); // Clear any previous rows
 
+        try {
+            // SQL Query to fetch data for the specified TenantID
+            String query = "SELECT customertenants.TenantID, customertenants.TenantName, customertenants.LastName, " +
+                           "rooms.RoomID, rooms.RoomSize , customertenants.CheckInDate, customertenants.CheckOutDate, " +
+                           "rooms.BedType, rooms.RoomPricePerHead " +
+                           "FROM customertenants " +
+                           "JOIN rooms ON customertenants.RoomID = rooms.RoomID " +  // Assuming there's a RoomID in customertenants table
+                           "WHERE customertenants.TenantID = ?";  // Using ? placeholder for prepared statement
+
+            PreparedStatement pstmt = conn.prepareStatement(query);
+            pstmt.setInt(1, tenantID); // Set the tenantID passed as argument in the query
+
+            ResultSet rs = pstmt.executeQuery(); // Execute the query
+
+            // Populate Data in Table
+            while (rs.next()) {
+                String tenantName = rs.getString("TenantName");
+                String lastName = rs.getString("LastName");
+                int roomID = rs.getInt("RoomID");
+                String roomType = rs.getString("BedType");
+                String bed = rs.getString("RoomSize");
+                String checkInDate = rs.getString("CheckInDate");
+                String checkOutDate = rs.getString("CheckOutDate");
+                double roomPrice = rs.getDouble("RoomPricePerHead");
+
+                // Calculate the number of days stayed
+                Date checkIn = rs.getDate("CheckInDate");
+                Date checkOut = rs.getDate("CheckOutDate");
+                long diffInMillies = Math.abs(checkOut.getTime() - checkIn.getTime());
+                long daysStayed = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+
+                // Calculate water and electricity bills
+                double waterBillPerDay = 15.0;  // Example: 15 PHP per day for water
+                double electricityBillPerDay = 40.0;  // Example: 40 PHP per day for electricity
+                double totalRoomPrice = roomPrice * daysStayed;
+                double totalWaterBill = waterBillPerDay * daysStayed;
+                double totalElectricityBill = electricityBillPerDay * daysStayed;
+                double totalAmount = totalRoomPrice + totalWaterBill + totalElectricityBill;
+
+                // Add a new row with the necessary data
+                Object[] rowData = {tenantName, lastName, roomID, roomType, bed, checkInDate, checkOutDate, 
+                                    totalWaterBill, totalElectricityBill, totalAmount};
+                model.addRow(rowData);  // Add row data to the table
+            }
+
+            rs.close();  // Close the ResultSet
+            pstmt.close();  // Close the PreparedStatement
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "An error occurred while loading data.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -52,71 +100,55 @@ public class PaymentMethod extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
-        jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
-        jLabel8 = new javax.swing.JLabel();
-        txtRentAmount = new javax.swing.JTextField();
-        txtTenantID = new javax.swing.JTextField();
-        txtWaterbill = new javax.swing.JTextField();
-        txtPayment = new javax.swing.JTextField();
-        txtChange = new javax.swing.JTextField();
-        jLabel9 = new javax.swing.JLabel();
         Payment = new javax.swing.JButton();
-        txtCheckinDate = new javax.swing.JTextField();
-        jLabel10 = new javax.swing.JLabel();
         txtPaymentAmount = new javax.swing.JTextField();
-        txtTotal = new javax.swing.JTextField();
-        jLabel12 = new javax.swing.JLabel();
-        search = new javax.swing.JButton();
-        txtRoomID = new javax.swing.JTextField();
+        bttnClear = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
         bttnexit = new javax.swing.JButton();
+        txtTenantID = new javax.swing.JTextField();
+        jLabel12 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
 
         jPanel1.setBackground(new java.awt.Color(204, 204, 255));
+        jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jPanel1.setForeground(new java.awt.Color(255, 255, 255));
 
         jLabel1.setFont(new java.awt.Font("Lucida Bright", 1, 24)); // NOI18N
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/payment-method.png"))); // NOI18N
         jLabel1.setText("Payment Method");
 
-        jLabel2.setFont(new java.awt.Font("Lucida Bright", 1, 18)); // NOI18N
-        jLabel2.setText("Room ID");
-
-        jTextField1.setFont(new java.awt.Font("Lucida Bright", 1, 18)); // NOI18N
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+        jButton1.setFont(new java.awt.Font("Lucida Bright", 1, 18)); // NOI18N
+        jButton1.setText("Search");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
+                jButton1ActionPerformed(evt);
             }
         });
 
-        jButton1.setFont(new java.awt.Font("Lucida Bright", 1, 18)); // NOI18N
-        jButton1.setText("Search");
-
         jPanel2.setBackground(new java.awt.Color(255, 204, 204));
+        jPanel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Room ID", "Bed", "Room Type", "Month Start", "Price"
+                "First Name", "Last Name", "Room ID", "Bed Type", "Room Size", "Check In Date", "Check Out Date", "Electric Bill", "Water Bill", "Total  Amount"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.String.class, java.lang.Double.class
+                java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Float.class, java.lang.Float.class, java.lang.Double.class
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -125,56 +157,8 @@ public class PaymentMethod extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(jTable1);
 
-        jLabel3.setFont(new java.awt.Font("Lucida Bright", 1, 18)); // NOI18N
-        jLabel3.setText("Check In Date:");
-
         jLabel4.setFont(new java.awt.Font("Lucida Bright", 1, 18)); // NOI18N
-        jLabel4.setText("Rent Amount:");
-
-        jLabel5.setFont(new java.awt.Font("Lucida Bright", 1, 18)); // NOI18N
-        jLabel5.setText("TenantID");
-
-        jLabel6.setFont(new java.awt.Font("Lucida Bright", 1, 18)); // NOI18N
-        jLabel6.setText("Total:");
-
-        jLabel7.setFont(new java.awt.Font("Lucida Bright", 1, 18)); // NOI18N
-        jLabel7.setText("Payment:");
-
-        jLabel8.setFont(new java.awt.Font("Lucida Bright", 1, 18)); // NOI18N
-        jLabel8.setText("Change:");
-
-        txtRentAmount.setFont(new java.awt.Font("Lucida Bright", 0, 18)); // NOI18N
-        txtRentAmount.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtRentAmountActionPerformed(evt);
-            }
-        });
-
-        txtTenantID.setFont(new java.awt.Font("Lucida Bright", 0, 18)); // NOI18N
-        txtTenantID.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtTenantIDActionPerformed(evt);
-            }
-        });
-
-        txtWaterbill.setFont(new java.awt.Font("Lucida Bright", 0, 18)); // NOI18N
-
-        txtPayment.setFont(new java.awt.Font("Lucida Bright", 0, 18)); // NOI18N
-        txtPayment.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtPaymentActionPerformed(evt);
-            }
-        });
-
-        txtChange.setFont(new java.awt.Font("Lucida Bright", 0, 18)); // NOI18N
-        txtChange.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtChangeActionPerformed(evt);
-            }
-        });
-
-        jLabel9.setFont(new java.awt.Font("Lucida Bright", 1, 18)); // NOI18N
-        jLabel9.setText("Payment Method");
+        jLabel4.setText("Amount:");
 
         Payment.setFont(new java.awt.Font("Lucida Bright", 1, 18)); // NOI18N
         Payment.setText("Payment");
@@ -184,149 +168,58 @@ public class PaymentMethod extends javax.swing.JFrame {
             }
         });
 
-        txtCheckinDate.addActionListener(new java.awt.event.ActionListener() {
+        txtPaymentAmount.setFont(new java.awt.Font("Lucida Bright", 0, 18)); // NOI18N
+
+        bttnClear.setFont(new java.awt.Font("Lucida Bright", 1, 18)); // NOI18N
+        bttnClear.setText("Clear");
+        bttnClear.setToolTipText("");
+        bttnClear.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtCheckinDateActionPerformed(evt);
+                bttnClearActionPerformed(evt);
             }
         });
 
-        jLabel10.setFont(new java.awt.Font("Lucida Bright", 1, 18)); // NOI18N
-        jLabel10.setText("Amount");
+        jLabel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 2));
 
-        txtTotal.setFont(new java.awt.Font("Lucida Bright", 1, 18)); // NOI18N
-        txtTotal.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtTotalActionPerformed(evt);
-            }
-        });
-
-        jLabel12.setFont(new java.awt.Font("Lucida Bright", 1, 18)); // NOI18N
-        jLabel12.setText("Water Bill:");
-
-        search.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        search.setText("Search");
-        search.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                searchActionPerformed(evt);
-            }
-        });
-
-        txtRoomID.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        txtRoomID.setText("Search RoomID");
-        txtRoomID.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtRoomIDActionPerformed(evt);
-            }
-        });
+        jLabel3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 2));
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(150, 150, 150)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 871, Short.MAX_VALUE)
-                .addContainerGap())
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(38, 38, 38)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGap(44, 44, 44)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(40, 40, 40)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtCheckinDate, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtWaterbill, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtRentAmount, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(263, 263, 263)
-                        .addComponent(jLabel9)))
-                .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(192, 192, 192)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(txtPayment, javax.swing.GroupLayout.DEFAULT_SIZE, 154, Short.MAX_VALUE)
-                            .addComponent(txtChange)))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(14, 14, 14)
-                        .addComponent(search, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtRoomID, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(31, 31, 31)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(txtPaymentAmount, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
                         .addComponent(Payment)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtPaymentAmount)
-                            .addComponent(txtTenantID))
-                        .addGap(322, 322, 322))))
+                        .addGap(461, 461, 461)
+                        .addComponent(bttnClear, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 943, Short.MAX_VALUE)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addGap(0, 36, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addGap(17, 17, 17)
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel10)
-                    .addComponent(txtPaymentAmount, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(3, 3, 3)
-                .addComponent(txtTenantID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 246, Short.MAX_VALUE)
+                .addGap(12, 12, 12)
+                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(Payment)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(210, 210, 210)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel5)
-                            .addComponent(txtRoomID, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(search, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)))
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(txtCheckinDate, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(Payment)
                     .addComponent(jLabel4)
-                    .addComponent(txtRentAmount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel12)
-                    .addComponent(txtWaterbill, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel6)
-                    .addComponent(txtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(25, 25, 25)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel7)
-                    .addComponent(txtPayment, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel9))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel8)
-                    .addComponent(txtChange, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(54, 54, 54))
+                    .addComponent(txtPaymentAmount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(bttnClear))
+                .addGap(48, 48, 48))
         );
 
         bttnexit.setFont(new java.awt.Font("Lucida Bright", 1, 18)); // NOI18N
@@ -337,21 +230,26 @@ public class PaymentMethod extends javax.swing.JFrame {
             }
         });
 
+        txtTenantID.setFont(new java.awt.Font("Lucida Bright", 0, 18)); // NOI18N
+
+        jLabel12.setFont(new java.awt.Font("Lucida Bright", 1, 18)); // NOI18N
+        jLabel12.setText("Tenant ID:");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(27, 27, 27)
+                .addGap(25, 25, 25)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(bttnexit)
                 .addGap(40, 40, 40))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel2)
-                .addGap(18, 18, 18)
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jLabel12)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtTenantID, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton1)
                 .addGap(90, 90, 90))
@@ -369,9 +267,9 @@ public class PaymentMethod extends javax.swing.JFrame {
                     .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2)
-                    .addComponent(jButton1))
+                    .addComponent(jButton1)
+                    .addComponent(txtTenantID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel12))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
@@ -392,197 +290,192 @@ public class PaymentMethod extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
-
-    private void txtPaymentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPaymentActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtPaymentActionPerformed
-
     private void bttnexitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bttnexitActionPerformed
         setVisible(false);
     }//GEN-LAST:event_bttnexitActionPerformed
 
-    private void txtRentAmountActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtRentAmountActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtRentAmountActionPerformed
-
-    private void txtChangeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtChangeActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtChangeActionPerformed
-
-    private void txtTotalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTotalActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtTotalActionPerformed
-
-    private void searchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchActionPerformed
-
-   
-    String roomID = txtRoomID.getText().trim();
-
-    // Validate if Room ID is entered
-    if (roomID.isEmpty()) {
-        JOptionPane.showMessageDialog(null, "Please enter a Room ID!", "Search Error", JOptionPane.ERROR_MESSAGE);
-        return;
-    }
-
-    // SQL query to fetch room details and tenant information based on Room ID
-    String sql = "SELECT RoomType, RoomPrice, Bed, CheckInDate FROM rooms  "
-               + "INNER JOIN customertenants  ON roomID = roomID "
-               + "WHERE roomID = ?";
-
-    try {
-        // Prepare the SQL statement
-        pst = conn.prepareStatement(sql);
-        pst.setString(1, roomID); // Set the Room ID parameter
-
-        // Execute the query and get the result
-        rs = pst.executeQuery();
-
-        // If a record is found, populate the fields
-        if (rs.next()) {
-            String roomType = rs.getString("roomType");
-            double price = rs.getDouble("price");
-            String bed = rs.getString("bed");
-            String checkin = rs.getString("checkin");
-
-          
-        } else {
-            // If no record is found, show a message
-            JOptionPane.showMessageDialog(null, "Room ID not found!", "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    } catch (SQLException e) {
-        // Handle SQL errors
-        JOptionPane.showMessageDialog(null, "Database Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-    }
-
-
-
-    }//GEN-LAST:event_searchActionPerformed
-
-    private void txtCheckinDateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCheckinDateActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtCheckinDateActionPerformed
-
-    private void txtRoomIDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtRoomIDActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtRoomIDActionPerformed
-
     private void PaymentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_PaymentActionPerformed
-       String sTid = txtTenantID.getText();  
-String sPaymentAmount = txtPaymentAmount.getText(); 
+        String sTid = txtTenantID.getText();  
+        String sPaymentAmount = txtPaymentAmount.getText(); 
 
-try {
-    double paymentAmount = Double.parseDouble(sPaymentAmount);
+        // Show a confirmation dialog and store the user's response
+        int response = JOptionPane.showConfirmDialog(null, "Are you sure you want to proceed with this payment?", "Confirm Payment", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 
-    try (Connection connect = dbconnect.getConnection()) {
-        
-        // Query to fetch tenant and room details
-        String query = "SELECT TenantID, TenantName, LastName, Gender, Bed, NoofPax, ContactNumber, RoomID, CheckInDate, CheckOutDate, RoomType FROM customertenants WHERE TenantID = ?";
-        PreparedStatement stmt = connect.prepareStatement(query);
-        stmt.setInt(1, Integer.parseInt(sTid));
-        ResultSet rs = stmt.executeQuery();
+        if (response == JOptionPane.YES_OPTION) {
+            System.out.println("User clicked YES. Proceeding with payment.");
 
-        if (rs.next()) {
-            int tenantID = rs.getInt("TenantID");
-            String tenantName = rs.getString("TenantName");
-            String lastName = rs.getString("LastName");
-            String gender = rs.getString("Gender");
-            String bed = rs.getString("Bed");
-            String noOfPax = rs.getString("NoofPax");
-            String contactNumber = rs.getString("ContactNumber");
-            int roomID = rs.getInt("RoomID");
-            Date checkInDate = rs.getDate("CheckInDate");
-            Date checkOutDate = rs.getDate("CheckOutDate");
-            String roomType = rs.getString("RoomType");
+            try {
+                double paymentAmount = Double.parseDouble(sPaymentAmount);
 
-            // Calculate the number of days stayed
-            long diffInMillies = Math.abs(checkOutDate.getTime() - checkInDate.getTime());
-            long daysStayed = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+                try (Connection connect = dbconnect.getConnection()) {
+                    // Query to fetch tenant and room details
+                    String query = "SELECT TenantID, TenantName, LastName, Gender, Bed, ContactNumber, RoomID, CheckInDate, CheckOutDate, RoomType FROM customertenants WHERE TenantID = ?";
+                    PreparedStatement stmt = connect.prepareStatement(query);
+                    stmt.setInt(1, Integer.parseInt(sTid));
+                    ResultSet rs = stmt.executeQuery();
 
-            // Fetch the room price
-            String roomQuery = "SELECT RoomPrice FROM rooms WHERE RoomID = ?";
-            PreparedStatement roomStmt = connect.prepareStatement(roomQuery);
-            roomStmt.setInt(1, roomID);
-            ResultSet roomRs = roomStmt.executeQuery();
-            double roomPrice = 0.0;
-            if (roomRs.next()) {
-                roomPrice = roomRs.getDouble("RoomPrice");
+                    if (rs.next()) {
+                        int tenantID = rs.getInt("TenantID");
+                        String tenantName = rs.getString("TenantName");
+                        String lastName = rs.getString("LastName");
+                        String gender = rs.getString("Gender");
+                        String bed = rs.getString("Bed");
+                        String contactNumber = rs.getString("ContactNumber");
+                        int roomID = rs.getInt("RoomID");
+                        Date checkInDate = rs.getDate("CheckInDate");
+                        Date checkOutDate = rs.getDate("CheckOutDate");
+                        String roomType = rs.getString("RoomType");
+
+                        // Calculate the number of days stayed
+                        long diffInMillies = Math.abs(checkOutDate.getTime() - checkInDate.getTime());
+                        long daysStayed = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+
+                        // Fetch the room price
+                        String roomQuery = "SELECT RoomPricePerHead FROM rooms WHERE RoomID = ?";
+                        PreparedStatement roomStmt = connect.prepareStatement(roomQuery);
+                        roomStmt.setInt(1, roomID);
+                        ResultSet roomRs = roomStmt.executeQuery();
+
+                        double roomPrice = 0.0;
+                        if (roomRs.next()) {
+                            roomPrice = roomRs.getDouble("RoomPricePerHead");
+                        }
+
+                        // Adjust room price based on bed type
+                        if ("Single".equalsIgnoreCase(bed)) {
+                            roomPrice *= 1;  // Price for Single bed (no change)
+                        } else if ("Double".equalsIgnoreCase(bed)) {
+                            roomPrice *= 2;  // Price for Double bed (multiply by 2)
+                        } else if ("Group".equalsIgnoreCase(bed)) {
+                            roomPrice *= 4;  // Price for Group bed (multiply by 4, or any appropriate multiplier)
+                        }
+
+                        // Calculate total room price based on days stayed
+                        double totalRoomPrice = roomPrice * daysStayed;
+
+                        // Calculate water and electricity bills
+                        double waterBillPerDay = 15.0;  // Example: 15 PHP per day for water
+                        double electricityBillPerDay = 40.0;  // Example: 40 PHP per day for electricity
+                        double totalWaterBill = waterBillPerDay * daysStayed;
+                        double totalElectricityBill = electricityBillPerDay * daysStayed;
+                        double newTotalAmount = totalRoomPrice + totalWaterBill + totalElectricityBill;
+
+                        // Check if the tenant has already made a payment
+                        String paymentCheckQuery = "SELECT TotalAmount, PaymentAmount FROM payments WHERE TenantID = ?";
+                        PreparedStatement paymentCheckStmt = connect.prepareStatement(paymentCheckQuery);
+                        paymentCheckStmt.setInt(1, tenantID);
+                        ResultSet paymentRs = paymentCheckStmt.executeQuery();
+
+                        double previousTotalAmount = 0.0;
+                        double previousPayment = 0.0;
+
+                        if (paymentRs.next()) {
+                            previousTotalAmount = paymentRs.getDouble("TotalAmount");
+                            previousPayment = paymentRs.getDouble("PaymentAmount");
+                        }
+
+                        // Calculate the additional amount required based on new and previous totals
+                        double additionalAmount = newTotalAmount - previousTotalAmount;
+
+                        if (paymentAmount < additionalAmount) {
+                            JOptionPane.showMessageDialog(null, "No additional payment is required.", "Payment Info", JOptionPane.INFORMATION_MESSAGE);
+                            return;
+                        }
+
+                        // Check if the payment is sufficient for the additional amount
+                        //if (paymentAmount < additionalAmount) {
+                        //    JOptionPane.showMessageDialog(null, "Insufficient payment! The additional amount required is: " + additionalAmount + " PHP", "Payment Error", JOptionPane.ERROR_MESSAGE);
+                         //   return;
+                        //}
+
+                        // Calculate the change
+                        double change = paymentAmount - additionalAmount;
+
+                        // Insert the new payment difference into the database
+                        String receiptQuery = "INSERT INTO payments (TenantID, RoomID, CheckInDate, CheckOutDate, RoomPrice, WaterBill, ElectricityBill, TotalAmount, PaymentAmount, ChangeAmount, PaymentDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                        PreparedStatement receiptStmt = connect.prepareStatement(receiptQuery);
+                        receiptStmt.setInt(1, tenantID);
+                        receiptStmt.setInt(2, roomID);
+                        receiptStmt.setDate(3, new java.sql.Date(checkInDate.getTime()));
+                        receiptStmt.setDate(4, new java.sql.Date(checkOutDate.getTime()));
+                        receiptStmt.setDouble(5, totalRoomPrice);
+                        receiptStmt.setDouble(6, totalWaterBill);
+                        receiptStmt.setDouble(7, totalElectricityBill);
+                        receiptStmt.setDouble(8, newTotalAmount);
+                        receiptStmt.setDouble(9, paymentAmount);
+                        receiptStmt.setDouble(10, change);
+                        receiptStmt.setDate(11, new java.sql.Date(System.currentTimeMillis()));
+                        receiptStmt.executeUpdate();
+
+                        // Show the receipt with tenant details
+                        String receiptMessage = "Additional Payment Received!\n\n" +
+                                "================= Tenant Details =================\n" +
+                                "Tenant ID: " + tenantID + "\n" +
+                                "Tenant Name: " + tenantName + " " + lastName + "\n" +
+                                "Gender: " + gender + "\n" +
+                                "Bed Type: " + bed + "\n" +
+                                "Contact Number: " + contactNumber + "\n" +
+                                "Room ID: " + roomID + "\n" +
+                                "Check-in Date: " + checkInDate + "\n" +
+                                "Check-out Date: " + checkOutDate + "\n" +
+                                "Room Type: " + roomType + "\n\n" +
+                                "================ Previous Payment =================\n" +
+                                "Previous Total Amount: " + previousTotalAmount + " PHP\n" +
+                                "Previous Payment: " + previousPayment + " PHP\n\n" +
+                                "================= New Payment =====================\n" +
+                                "Updated Room Price: " + totalRoomPrice + " PHP\n" +
+                                "Updated Water Bill: " + totalWaterBill + " PHP\n" +
+                                "Updated Electricity Bill: " + totalElectricityBill + " PHP\n" +
+                                "New Total Amount: " + newTotalAmount + " PHP\n" +
+                                "Additional Amount Required: " + additionalAmount + " PHP\n" +
+                                "Payment Received: " + paymentAmount + " PHP\n" +
+                                "Change: " + change + " PHP\n" +
+                                "===================================================";
+
+                        JOptionPane.showMessageDialog(null, receiptMessage, "Receipt", JOptionPane.INFORMATION_MESSAGE);
+                        txtPaymentAmount.setText("");
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Tenant not found!", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(null, "Error processing payment!", "Payment Error", JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(null, "Payment must be a valid number!", "Input Error", JOptionPane.ERROR_MESSAGE);
             }
-
-            // Calculate water and electricity bills
-            double waterBill = 15.0; // 15 PHP per day
-            double electricityBill = 40.0; // 40 PHP per day
-            double totalRoomPrice = roomPrice * daysStayed;
-            double totalWaterBill = waterBill * daysStayed;
-            double totalElectricityBill = electricityBill * daysStayed;
-            double totalAmount = totalRoomPrice + totalWaterBill + totalElectricityBill;
-
-            // Check if the payment is sufficient
-            if (paymentAmount < totalAmount) {
-                JOptionPane.showMessageDialog(null, "Insufficient payment! The total amount is: " + totalAmount + " PHP", "Payment Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            // Calculate change
-            double change = paymentAmount - totalAmount;
-
-            // Insert the payment and receipt into the database
-            String receiptQuery = "INSERT INTO payments (TenantID, RoomID, CheckInDate, CheckOutDate, RoomPrice, WaterBill, ElectricityBill, TotalAmount, PaymentAmount, ChangeAmount, PaymentDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            PreparedStatement receiptStmt = connect.prepareStatement(receiptQuery);
-            receiptStmt.setInt(1, tenantID);
-            receiptStmt.setInt(2, roomID);
-            receiptStmt.setDate(3, new java.sql.Date(checkInDate.getTime()));
-            receiptStmt.setDate(4, new java.sql.Date(checkOutDate.getTime()));
-            receiptStmt.setDouble(5, totalRoomPrice);
-            receiptStmt.setDouble(6, totalWaterBill);
-            receiptStmt.setDouble(7, totalElectricityBill);
-            receiptStmt.setDouble(8, totalAmount);
-            receiptStmt.setDouble(9, paymentAmount);
-            receiptStmt.setDouble(10, change);
-            receiptStmt.setDate(11, new java.sql.Date(System.currentTimeMillis()));
-            receiptStmt.executeUpdate();
-
-            // Show receipt with tenant details
-            String receiptMessage = "Payment received!\n" +
-                    "Tenant ID: " + tenantID + "\n" +
-                    "Tenant Name: " + tenantName + " " + lastName + "\n" +
-                    "Gender: " + gender + "\n" +
-                    "Bed Type: " + bed + "\n" +
-                    "No. of Pax: " + noOfPax + "\n" +
-                    "Contact Number: " + contactNumber + "\n" +
-                    "Room ID: " + roomID + "\n" +
-                    "Check-in Date: " + checkInDate + "\n" +
-                    "Check-out Date: " + checkOutDate + "\n" +
-                    "Room Type: " + roomType + "\n\n" +
-                    "Room Price: " + totalRoomPrice + " PHP\n" +
-                    "Water Bill: " + totalWaterBill + " PHP\n" +
-                    "Electricity Bill: " + totalElectricityBill + " PHP\n" +
-                    "Total Amount: " + totalAmount + " PHP\n" +
-                    "Paid: " + paymentAmount + " PHP\n" +
-                    "Change: " + change + " PHP";
-
-            JOptionPane.showMessageDialog(null, receiptMessage, "Receipt", JOptionPane.INFORMATION_MESSAGE);
-
-            txtPaymentAmount.setText("");
         } else {
-            JOptionPane.showMessageDialog(null, "Tenant not found!", "Error", JOptionPane.ERROR_MESSAGE);
+            System.out.println("User clicked NO. Operation aborted.");
         }
-
-    }
-} catch (SQLException e) {
-    JOptionPane.showMessageDialog(null, "Error processing payment!", "Payment Error", JOptionPane.ERROR_MESSAGE);
-    e.printStackTrace();
-} catch (NumberFormatException e) {
-    JOptionPane.showMessageDialog(null, "Payment must be a valid number!", "Input Error", JOptionPane.ERROR_MESSAGE);
-}
 
     }//GEN-LAST:event_PaymentActionPerformed
 
-    private void txtTenantIDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTenantIDActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtTenantIDActionPerformed
+    private void bttnClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bttnClearActionPerformed
+        setVisible(false);
+        new CustomerCheckin().setVisible(true);
+    }//GEN-LAST:event_bttnClearActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // Get tenant ID from text field (txtTenantID is the text field for tenant ID)
+        String tenantIDText = txtTenantID.getText();
+
+        // Validate tenant ID input
+        if (tenantIDText.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Please enter a Tenant ID.", "Input Error", JOptionPane.ERROR_MESSAGE);
+            return; // Exit if no tenant ID is entered
+        }
+
+        try {
+            int tenantID = Integer.parseInt(tenantIDText);  // Parse the tenant ID
+
+            // Call loadData to populate the table with data for the specific tenant ID
+            loadData(tenantID);
+
+        } catch (NumberFormatException e) {
+            // Handle invalid tenant ID format (not an integer)
+            JOptionPane.showMessageDialog(null, "Invalid Tenant ID format.", "Input Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -622,33 +515,22 @@ try {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton Payment;
+    private javax.swing.JButton bttnClear;
     private javax.swing.JButton bttnexit;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JButton search;
-    private javax.swing.JTextField txtChange;
-    private javax.swing.JTextField txtCheckinDate;
-    private javax.swing.JTextField txtPayment;
     private javax.swing.JTextField txtPaymentAmount;
-    private javax.swing.JTextField txtRentAmount;
-    private javax.swing.JTextField txtRoomID;
     private javax.swing.JTextField txtTenantID;
-    private javax.swing.JTextField txtTotal;
-    private javax.swing.JTextField txtWaterbill;
     // End of variables declaration//GEN-END:variables
+
+    
+    
 }

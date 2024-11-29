@@ -44,12 +44,13 @@ public class View_Available_Apartments extends javax.swing.JFrame {
         
         while(rs.next()){
             int roomID = rs.getInt("RoomID");
-            String roomType = rs.getString("RoomType");
+            String bedType = rs.getString("BedType");
             int roomSize = rs.getInt("RoomSize");
-            double roomPrice = rs.getDouble("RoomPrice");
+            int noofOccupants = rs.getInt("NoofAvailableBed");
+            double roomPrice = rs.getDouble("RoomPricePerHead");
             String roomStatus = rs.getString("Status");
             
-            Object[] rowData = {roomID, roomType, roomSize, roomPrice, roomStatus};
+            Object[] rowData = {roomID, bedType, roomSize, noofOccupants, roomPrice, roomStatus};
             model.addRow(rowData);
         }
             rs.close();
@@ -75,12 +76,15 @@ public class View_Available_Apartments extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         bttnexit = new javax.swing.JButton();
+        bttnAddRooms = new javax.swing.JButton();
+        bttnDeleteRooms = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setLocation(new java.awt.Point(50, 100));
         setUndecorated(true);
 
         jPanel1.setBackground(new java.awt.Color(204, 204, 255));
+        jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         jLabel1.setFont(new java.awt.Font("Lucida Bright", 1, 18)); // NOI18N
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/hallway (1).png"))); // NOI18N
@@ -93,11 +97,11 @@ public class View_Available_Apartments extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Room ID", "Room Type", "Room Size", "Price", "Status"
+                "Room ID", "Bed Type", "Room Size", "No Of Occupants", "Room Price Per Head", "Status "
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Double.class, java.lang.String.class
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -105,6 +109,11 @@ public class View_Available_Apartments extends javax.swing.JFrame {
             }
         });
         jTable1.setPreferredSize(new java.awt.Dimension(2000, 1000));
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable1MouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(jTable1);
 
         bttnexit.setFont(new java.awt.Font("Lucida Bright", 1, 18)); // NOI18N
@@ -112,6 +121,20 @@ public class View_Available_Apartments extends javax.swing.JFrame {
         bttnexit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 bttnexitActionPerformed(evt);
+            }
+        });
+
+        bttnAddRooms.setText("Add Rooms");
+        bttnAddRooms.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bttnAddRoomsActionPerformed(evt);
+            }
+        });
+
+        bttnDeleteRooms.setText("Delete Rooms");
+        bttnDeleteRooms.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bttnDeleteRoomsActionPerformed(evt);
             }
         });
 
@@ -124,10 +147,15 @@ public class View_Available_Apartments extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jScrollPane1)
                     .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(17, 17, 17)
                         .addComponent(jLabel1)
-                        .addGap(636, 636, 636)
+                        .addGap(77, 77, 77)
+                        .addComponent(bttnAddRooms)
+                        .addGap(29, 29, 29)
+                        .addComponent(bttnDeleteRooms)
+                        .addGap(346, 346, 346)
                         .addComponent(bttnexit)))
-                .addContainerGap(17, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -135,10 +163,13 @@ public class View_Available_Apartments extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1)
-                    .addComponent(bttnexit))
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(bttnexit)
+                        .addComponent(bttnAddRooms, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(bttnDeleteRooms, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(117, Short.MAX_VALUE))
+                .addContainerGap(115, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -159,6 +190,123 @@ public class View_Available_Apartments extends javax.swing.JFrame {
     private void bttnexitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bttnexitActionPerformed
         setVisible(false);
     }//GEN-LAST:event_bttnexitActionPerformed
+
+    private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTable1MouseClicked
+
+    private void bttnAddRoomsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bttnAddRoomsActionPerformed
+        
+    javax.swing.JTextField roomIDField = new javax.swing.JTextField();
+    javax.swing.JTextField bedTypeField = new javax.swing.JTextField();
+    javax.swing.JTextField roomSizeField = new javax.swing.JTextField();
+    javax.swing.JTextField noOfOccupantsField = new javax.swing.JTextField();
+    javax.swing.JTextField roomPriceField = new javax.swing.JTextField();
+    javax.swing.JTextField statusField = new javax.swing.JTextField();
+
+    Object[] inputFields = {
+        "Room ID (Integer):", roomIDField,
+        "Bed Type (String):", bedTypeField,
+        "Room Size (Integer):", roomSizeField,
+        "Number of Occupants (Integer):", noOfOccupantsField,
+        "Room Price Per Head (Double):", roomPriceField,
+        "Status (String):", statusField
+    };
+
+    int option = javax.swing.JOptionPane.showConfirmDialog(null, inputFields, "Add New Room", javax.swing.JOptionPane.OK_CANCEL_OPTION);
+    if (option == javax.swing.JOptionPane.OK_OPTION) {
+        try {
+            
+            int roomID = Integer.parseInt(roomIDField.getText().trim());
+            String bedType = bedTypeField.getText().trim();
+            int roomSize = Integer.parseInt(roomSizeField.getText().trim());
+            int noOfOccupants = Integer.parseInt(noOfOccupantsField.getText().trim());
+            double roomPrice = Double.parseDouble(roomPriceField.getText().trim());
+            String status = statusField.getText().trim();
+
+            
+            String insertQuery = "INSERT INTO rooms (RoomID, BedType, RoomSize, NoofAvailableBed, RoomPricePerHead, Status) VALUES (?, ?, ?, ?, ?, ?)";
+            PreparedStatement pstmt = conn.prepareStatement(insertQuery);
+            pstmt.setInt(1, roomID);
+            pstmt.setString(2, bedType);
+            pstmt.setInt(3, roomSize);
+            pstmt.setInt(4, noOfOccupants);
+            pstmt.setDouble(5, roomPrice);
+            pstmt.setString(6, status);
+            int rowsInserted = pstmt.executeUpdate();
+
+            if (rowsInserted > 0) {
+                javax.swing.JOptionPane.showMessageDialog(null, "Room added successfully!");
+                
+                loadData();
+            } else {
+                javax.swing.JOptionPane.showMessageDialog(null, "Failed to add room.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+            }
+            pstmt.close();
+        } catch (NumberFormatException e) {
+            javax.swing.JOptionPane.showMessageDialog(null, "Invalid input! Please enter the correct data types.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            javax.swing.JOptionPane.showMessageDialog(null, "Database error: " + e.getMessage(), "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    }//GEN-LAST:event_bttnAddRoomsActionPerformed
+
+    private void bttnDeleteRoomsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bttnDeleteRoomsActionPerformed
+        int selectedRow = jTable1.getSelectedRow();
+    if (selectedRow == -1) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Please select a room to delete.", "Error", javax.swing.JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+
+    
+    int roomID = (int) jTable1.getValueAt(selectedRow, 0);
+    String bedType = (String) jTable1.getValueAt(selectedRow, 1);
+
+    
+    javax.swing.JTextField reasonField = new javax.swing.JTextField();
+    Object[] message = {
+        "Room ID: " + roomID + "\nBed Type: " + bedType + "\n\nPlease enter the reason for deletion:", reasonField
+    };
+
+    int option = javax.swing.JOptionPane.showConfirmDialog(this, message, "Delete Room", javax.swing.JOptionPane.OK_CANCEL_OPTION);
+    if (option == javax.swing.JOptionPane.OK_OPTION) {
+        String reason = reasonField.getText().trim();
+        if (reason.isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Reason cannot be empty. Please provide a valid reason.", "Error", javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        
+        int confirm = javax.swing.JOptionPane.showConfirmDialog(this,
+            "The room will be deleted because: " + reason + "\nAre you sure you want to proceed?",
+            "Confirm Deletion",
+            javax.swing.JOptionPane.YES_NO_OPTION);
+
+        if (confirm == javax.swing.JOptionPane.YES_OPTION) {
+            try {
+                
+                String deleteQuery = "DELETE FROM rooms WHERE RoomID = ?";
+                PreparedStatement pstmt = conn.prepareStatement(deleteQuery);
+                pstmt.setInt(1, roomID);
+                int rowsDeleted = pstmt.executeUpdate();
+
+                if (rowsDeleted > 0) {
+                    javax.swing.JOptionPane.showMessageDialog(this, "Room deleted successfully!");
+                    
+                    DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+                    model.removeRow(selectedRow);
+                } else {
+                    javax.swing.JOptionPane.showMessageDialog(this, "Failed to delete the room. It may not exist in the database.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+                }
+                pstmt.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+                javax.swing.JOptionPane.showMessageDialog(this, "Database error: " + e.getMessage(), "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+    }//GEN-LAST:event_bttnDeleteRoomsActionPerformed
 
     /**
      * @param args the command line arguments
@@ -196,6 +344,8 @@ public class View_Available_Apartments extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton bttnAddRooms;
+    private javax.swing.JButton bttnDeleteRooms;
     private javax.swing.JButton bttnexit;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;

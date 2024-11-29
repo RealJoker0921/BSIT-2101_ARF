@@ -4,10 +4,6 @@
  */
 package GUI;
 
-import java.text.SimpleDateFormat;
-import java.text.ParseException;
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
 import Connectors.dbconnect;
 import java.sql.Connection;
 import java.sql.*;
@@ -39,9 +35,8 @@ public class CustomerCheckin extends javax.swing.JFrame {
         //CustomerCheckin();
         JFrame frame = new JFrame("Data from Database");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        //String[] columnNames = {"Tenant ID", "First Name", "Last Name", "Gender", "Bed", "No of Pax", "Contact Number", "Room ID", "Check In Date", "Check Out Date", "Room Type"};
+        
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-        //model.addRow(columnNames);
         JTable table = new JTable(model);
         model.setRowCount(0);
 
@@ -56,13 +51,12 @@ public class CustomerCheckin extends javax.swing.JFrame {
                 String tenantLName = rs.getString("LastName");
                 String gender = rs.getString("Gender");
                 String bed = rs.getString("Bed");
-                int np = rs.getInt("NoofPax");
                 String contact = rs.getString("ContactNumber");
                 int roomID = rs.getInt("RoomID");
                 String cid = rs.getString("CheckInDate");
                 String cod = rs.getString("CheckOutDate");
                 String rType = rs.getString("RoomType");
-                Object[] rowData = {tenantID, tenantName, tenantLName, gender, bed, np, contact, roomID, cid, cod, rType};
+                Object[] rowData = {tenantID, tenantName, tenantLName, gender, bed, contact, roomID, cid, cod, rType};
                 model.addRow(rowData);
             }
  
@@ -84,8 +78,6 @@ public class CustomerCheckin extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jLabel4 = new javax.swing.JLabel();
-        bttnexit = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         labelFName = new javax.swing.JLabel();
         labelRId = new javax.swing.JLabel();
@@ -116,28 +108,17 @@ public class CustomerCheckin extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         bttnSearch = new javax.swing.JButton();
-        lblNoPax = new javax.swing.JLabel();
-        CboxNoOfPax = new javax.swing.JComboBox<>();
-        jButton1 = new javax.swing.JButton();
+        bttnSearch1 = new javax.swing.JButton();
+        jLabel4 = new javax.swing.JLabel();
+        bttnexit = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
 
-        jPanel1.setBackground(new java.awt.Color(153, 153, 153));
-
-        jLabel4.setFont(new java.awt.Font("Lucida Bright", 1, 18)); // NOI18N
-        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/check-in-desk.png"))); // NOI18N
-        jLabel4.setText("Customer Maintenance");
-
-        bttnexit.setFont(new java.awt.Font("Lucida Bright", 1, 18)); // NOI18N
-        bttnexit.setText("Back");
-        bttnexit.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bttnexitActionPerformed(evt);
-            }
-        });
+        jPanel1.setBackground(new java.awt.Color(204, 204, 255));
 
         jPanel2.setBackground(new java.awt.Color(255, 204, 204));
+        jPanel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         labelFName.setFont(new java.awt.Font("Lucida Bright", 1, 14)); // NOI18N
         labelFName.setText("First Name:");
@@ -243,14 +224,14 @@ public class CustomerCheckin extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Tenant ID", "First Name", "Last Name", "Gender", "Bed", "No of Pax", "Contact Num.", "Room ID", "Check In Date", "Check Out Date", "Room Type"
+                "Tenant ID", "First Name", "Last Name", "Gender", "Bed", "Contact Num.", "Room ID", "Check In Date", "Check Out Date", "Room Type"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class, java.lang.Object.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -280,7 +261,7 @@ public class CustomerCheckin extends javax.swing.JFrame {
         lblGender1.setToolTipText("");
 
         Cboxtype.setFont(new java.awt.Font("Lucida Bright", 0, 14)); // NOI18N
-        Cboxtype.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Single", "Double", "Barkada", "Family Size" }));
+        Cboxtype.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Single", "Double", "Group" }));
 
         lblGender2.setFont(new java.awt.Font("Lucida Bright", 1, 14)); // NOI18N
         lblGender2.setText("Room Type:");
@@ -300,17 +281,23 @@ public class CustomerCheckin extends javax.swing.JFrame {
             }
         });
 
-        lblNoPax.setFont(new java.awt.Font("Lucida Bright", 1, 14)); // NOI18N
-        lblNoPax.setText("No of Pax:");
-
-        CboxNoOfPax.setFont(new java.awt.Font("Lucida Bright", 0, 14)); // NOI18N
-        CboxNoOfPax.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "5", "8" }));
-
-        jButton1.setFont(new java.awt.Font("Lucida Console", 1, 14)); // NOI18N
-        jButton1.setText("Payment");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        bttnSearch1.setFont(new java.awt.Font("Lucida Bright", 1, 14)); // NOI18N
+        bttnSearch1.setText("Payment");
+        bttnSearch1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                bttnSearch1ActionPerformed(evt);
+            }
+        });
+
+        jLabel4.setFont(new java.awt.Font("Lucida Bright", 1, 18)); // NOI18N
+        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/check-in-desk.png"))); // NOI18N
+        jLabel4.setText("Tenant Maintenance");
+
+        bttnexit.setFont(new java.awt.Font("Lucida Bright", 1, 18)); // NOI18N
+        bttnexit.setText("Back");
+        bttnexit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bttnexitActionPerformed(evt);
             }
         });
 
@@ -318,12 +305,6 @@ public class CustomerCheckin extends javax.swing.JFrame {
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 975, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 975, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(14, Short.MAX_VALUE))
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
@@ -337,15 +318,13 @@ public class CustomerCheckin extends javax.swing.JFrame {
                                     .addComponent(labelFName)
                                     .addComponent(lblLName, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(lblGender, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(lblGender1, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(lblNoPax, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(lblGender1, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addComponent(txtLname, javax.swing.GroupLayout.DEFAULT_SIZE, 168, Short.MAX_VALUE)
                                     .addComponent(txtTenantName, javax.swing.GroupLayout.DEFAULT_SIZE, 168, Short.MAX_VALUE)
                                     .addComponent(CboxGender, 0, 168, Short.MAX_VALUE)
-                                    .addComponent(Cboxtype, 0, 168, Short.MAX_VALUE)
-                                    .addComponent(CboxNoOfPax, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                    .addComponent(Cboxtype, 0, 168, Short.MAX_VALUE)))
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addComponent(labelTId, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -376,26 +355,42 @@ public class CustomerCheckin extends javax.swing.JFrame {
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(bCheckin)
-                                    .addComponent(bDel, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(bDel, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(bCheckin))
                                 .addGap(22, 22, 22)
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(bttnClear, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(bttnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(jButton1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(bttnSearch1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(bttnSearch, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                        .addGap(28, 28, 28)))
+                        .addGap(28, 28, 28))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel4)
+                        .addGap(284, 284, 284)
+                        .addComponent(bttnexit)
+                        .addGap(12, 12, 12))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 975, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 975, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(bttnexit))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(labelTId)
                             .addComponent(txtTenantID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -421,11 +416,10 @@ public class CustomerCheckin extends javax.swing.JFrame {
                                     .addComponent(txtcheckout, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(lblCheckout)))))
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(16, 16, 16)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(bCheckin)
-                            .addComponent(bttnClear))
-                        .addGap(18, 18, 18)
+                            .addComponent(bttnClear)
+                            .addComponent(bCheckin))
+                        .addGap(22, 22, 22)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(bDel)
                             .addComponent(bttnUpdate))))
@@ -442,19 +436,14 @@ public class CustomerCheckin extends javax.swing.JFrame {
                             .addComponent(lblGender1)
                             .addComponent(Cboxtype, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtRoomID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(labelRId, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 11, Short.MAX_VALUE)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(lblNoPax)
-                            .addComponent(CboxNoOfPax, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(labelRId, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(bttnSearch)
-                        .addGap(18, 18, 18)
-                        .addComponent(jButton1)
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addGap(18, 18, 18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(bttnSearch1)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 309, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -464,24 +453,15 @@ public class CustomerCheckin extends javax.swing.JFrame {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(23, 23, 23)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel4)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(bttnexit)))
-                .addGap(21, 21, 21))
+                .addGap(22, 22, 22)
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(22, 22, 22))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(bttnexit))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(12, Short.MAX_VALUE)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -514,134 +494,163 @@ public class CustomerCheckin extends javax.swing.JFrame {
 
     private void bttnClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bttnClearActionPerformed
         setVisible(false);
+        JOptionPane.showConfirmDialog(null, "Are you sure you want to Clear?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
         new CustomerCheckin().setVisible(true);
     }//GEN-LAST:event_bttnClearActionPerformed
 
     private void bCheckinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bCheckinActionPerformed
-                              
-    String sTid = txtTenantID.getText();
-    String sTname = txtTenantName.getText();
-    String sLname = txtLname.getText();
-    String sContact = txtContactNum.getText();
-    String sRID = txtRoomID.getText();
-    String sCID = txtcheckin.getText();
-    String sCOD = txtcheckout.getText();
-    String sGender = (String) CboxGender.getSelectedItem();
-    String sBed = (String) Cboxtype.getSelectedItem();
-    String sNoOfPax = (String) CboxNoOfPax.getSelectedItem();
-    String sRoomType = (String) CbRoomtype.getSelectedItem();
-
-    try {
-        int RoomID = Integer.parseInt(sRID);
-        int i = 1;
-
-        try (Connection connect = dbconnect.getConnection()) {
-            // Check if room is available
-            String checkRoomQuery = "SELECT Status FROM rooms WHERE RoomID = ?";
-            PreparedStatement checkRoomStmt = connect.prepareStatement(checkRoomQuery);
-            checkRoomStmt.setInt(1, RoomID);
-            ResultSet rs = checkRoomStmt.executeQuery();
-
-            if (rs.next()) {
-                String roomStatus = rs.getString("Status");
-                if (!roomStatus.equals("Available")) {
-                    JOptionPane.showMessageDialog(null, "Room is not available!", "Room Error", JOptionPane.ERROR_MESSAGE);
-                    return; // Exit if the room is not available
-                }
-            } else {
-                JOptionPane.showMessageDialog(null, "Room ID does not exist!", "Room Error", JOptionPane.ERROR_MESSAGE);
-                return; // Exit if the room does not exist
-            }
-
-            // Insert the tenant data into the database
-            String query = "INSERT INTO `customertenants` (`TenantID`, `TenantName`, `LastName`, `Gender`, `Bed`, `NoofPax`, `ContactNumber`, `RoomID`, `CheckInDate`, `CheckOutDate`, `RoomType`) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            PreparedStatement pstmt = connect.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-            pstmt.setString(i, sTid);
-            pstmt.setString(i++, sTname);
-            pstmt.setString(i++, sLname);
-            pstmt.setString(i++, sGender);
-            pstmt.setString(i++, sBed);
-            pstmt.setString(i++, sNoOfPax);
-            pstmt.setString(i++, sContact);
-            pstmt.setInt(i++, RoomID);
-            pstmt.setString(i++, sCID);
-            pstmt.setString(i++, sCOD);
-            pstmt.setString(i++, sRoomType);
-            pstmt.executeUpdate();
-
-            // Update room status to 'Occupied'
-            String updateRoomQuery = "UPDATE rooms SET Status = ? WHERE RoomID = ?";
-            PreparedStatement updateRoomStmt = connect.prepareStatement(updateRoomQuery);
-            updateRoomStmt.setString(1, "Occupied");
-            updateRoomStmt.setInt(2, RoomID);
-            updateRoomStmt.executeUpdate();
-
-            JOptionPane.showMessageDialog(null, "New Tenant Added!", "Adding Tenant Successfully", JOptionPane.INFORMATION_MESSAGE);
-
-            // Clear the input fields
-            txtTenantName.setText("");
-            txtLname.setText("");
-            CboxGender.setSelectedItem("Male");
-            Cboxtype.setSelectedItem("Single");
-            CboxNoOfPax.setSelectedItem("1");
-            txtContactNum.setText("");
-            txtRoomID.setText("");
-            txtcheckin.setText("");
-            txtcheckout.setText("");
-            CbRoomtype.setSelectedItem("AC");
-        }
-    } catch (SQLException e) {
-        JOptionPane.showMessageDialog(null, "Adding Unsuccessfully!", "TenantError!", JOptionPane.ERROR_MESSAGE);
-        e.printStackTrace();
-    } catch (NumberFormatException e) {
-        JOptionPane.showMessageDialog(null, "Room ID must be a number!", "Input Error", JOptionPane.ERROR_MESSAGE);
-    }
-
-
-    
-
-   
-    }//GEN-LAST:event_bCheckinActionPerformed
-
-    private void bDelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bDelActionPerformed
-        String sTID = txtTenantID.getText();
-        String sRID = txtRoomID.getText();
-        /*String sTname = txtTenantName.getText();
+        String sTid = txtTenantID.getText();
+        String sTname = txtTenantName.getText();
         String sLname = txtLname.getText();
         String sContact = txtContactNum.getText();
         String sRID = txtRoomID.getText();
         String sCID = txtcheckin.getText();
         String sCOD = txtcheckout.getText();
+        String sGender = (String) CboxGender.getSelectedItem();
+        String sBed = (String) Cboxtype.getSelectedItem();
+        String sRoomType = (String) CbRoomtype.getSelectedItem();
 
-        int ID = Integer.parseInt(sTID);
-        int RoomID = Integer.parseInt(sRID);*/
+        // Show a confirmation dialog and store the user's response
+        int response = JOptionPane.showConfirmDialog(null, "Are you sure you want to proceed with the check-in?", "Confirm Check-In", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+
+        if (response == JOptionPane.YES_OPTION) {
+            try {
+                int RoomID = Integer.parseInt(sRID);
+                int requiredBeds = 1; // This assumes one tenant per check-in
+
+                try (Connection connect = dbconnect.getConnection()) {
+                    // Check the room's availability and current number of occupants
+                    String checkRoomQuery = "SELECT Status, NoofAvailableBed FROM rooms WHERE RoomID = ?";
+                    PreparedStatement checkRoomStmt = connect.prepareStatement(checkRoomQuery);
+                    checkRoomStmt.setInt(1, RoomID);
+                    ResultSet rs = checkRoomStmt.executeQuery();
+
+                    if (rs.next()) {
+                        String roomStatus = rs.getString("Status");
+                        int currentAvailableBeds = rs.getInt("NoofAvailableBed");
+
+                        // Check if room is available
+                        if (roomStatus.equals("Occupied") || currentAvailableBeds <= 0) {
+                            JOptionPane.showMessageDialog(null, "Room is full or not available!", "Room Error", JOptionPane.ERROR_MESSAGE);
+                            return; // Exit if the room is full or not available
+                        }
+
+                        // Check if the room has enough available beds for the required occupants
+                        if (currentAvailableBeds < requiredBeds) {
+                            JOptionPane.showMessageDialog(null, "Room does not have enough available beds for the selected occupancy!", "Occupancy Error", JOptionPane.ERROR_MESSAGE);
+                            return;
+                        }
+
+                        // Update the room's available beds
+                        currentAvailableBeds -= requiredBeds; // Decrease available beds by the number of people checking in
+                        String newStatus = (currentAvailableBeds == 0) ? "Occupied" : "Available";
+
+                        String updateRoomQuery = "UPDATE rooms SET NoofAvailableBed = ?, Status = ? WHERE RoomID = ?";
+                        PreparedStatement updateRoomStmt = connect.prepareStatement(updateRoomQuery);
+                        updateRoomStmt.setInt(1, currentAvailableBeds);
+                        updateRoomStmt.setString(2, newStatus);
+                        updateRoomStmt.setInt(3, RoomID);
+                        updateRoomStmt.executeUpdate();
+
+                        // Insert the tenant data into the database
+                        String query = "INSERT INTO customertenants (TenantName, LastName, Gender, Bed, ContactNumber, RoomID, CheckInDate, CheckOutDate, RoomType) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                        PreparedStatement pstmt = connect.prepareStatement(query);
+                        pstmt.setString(1, sTname);
+                        pstmt.setString(2, sLname);
+                        pstmt.setString(3, sGender);
+                        pstmt.setString(4, sBed);
+                        pstmt.setString(5, sContact);
+                        pstmt.setInt(6, RoomID);
+                        pstmt.setString(7, sCID);
+                        pstmt.setString(8, sCOD);
+                        pstmt.setString(9, sRoomType);
+                        pstmt.executeUpdate();
+
+                        JOptionPane.showMessageDialog(null, "Check-in successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                        loadData();
+                        // Clear the input fields
+                        txtTenantName.setText("");
+                        txtLname.setText("");
+                        CboxGender.setSelectedItem("Male");
+                        Cboxtype.setSelectedItem("Single");
+                        txtContactNum.setText("");
+                        txtRoomID.setText("");
+                        txtcheckin.setText("");
+                        txtcheckout.setText("");
+                        CbRoomtype.setSelectedItem("AC");
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Room ID does not exist!", "Room Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(null, "An error occurred during check-in!", "Error", JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(null, "Room ID must be a number!", "Input Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+
+    }//GEN-LAST:event_bCheckinActionPerformed
+
+    private void bDelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bDelActionPerformed
+        String sTID = txtTenantID.getText(); // Get Tenant ID from the text field
+        String sRID = txtRoomID.getText();   // Get Room ID from the text field
+        
+        JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this tenant and update room availability?", "Confirm Deletion", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 
         try {
-            /*Statement stmt= conn.createStatement();
-            String query = "DELETE FROM `customertenants` WHERE `customertenants`.`TenantID` = '"+sTID+"'";
-            stmt.execute(query);*/
             Connection connect = dbconnect.getConnection();
-            String query = "DELETE FROM `customertenants` WHERE `TenantID` = ?";
-            PreparedStatement deleteRoomStmt = connect.prepareStatement(query);
-            deleteRoomStmt.setInt(1, Integer.parseInt(sTID));
-            deleteRoomStmt.executeUpdate();
-            loadData();
-            
-            int RoomID = Integer.parseInt(sRID);
-            String updateRoomQuery = "UPDATE rooms SET Status = ? WHERE RoomID = ?";
-            PreparedStatement updateRoomStmt = connect.prepareStatement(updateRoomQuery);
-            updateRoomStmt.setString(1, "Available");
-            updateRoomStmt.setInt(2, RoomID);
-            updateRoomStmt.executeUpdate();
-            
-            
-            JOptionPane.showMessageDialog(null, "Tenant Deleted!", "Deleting Tenant Successfully", 0);
 
-        }
-        catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Deleting Unsuccessfully!", "TenantError!", 0);
+            //Retrieve the current available bed count for the room
+            String checkRoomQuery = "SELECT NoofAvailableBed FROM rooms WHERE RoomID = ?";
+            PreparedStatement checkRoomStmt = connect.prepareStatement(checkRoomQuery);
+            checkRoomStmt.setInt(1, Integer.parseInt(sRID));
+            ResultSet rs = checkRoomStmt.executeQuery();
+
+            if (rs.next()) {
+                int currentAvailableBeds = rs.getInt("NoofAvailableBed");
+
+                // Increment the available bed count by 1 (since tenant is being deleted)
+                currentAvailableBeds++;
+
+                //Update the NoofAvailableBed and Room Status in the rooms table
+                String updateRoomQuery = "UPDATE rooms SET NoofAvailableBed = ?, Status = ? WHERE RoomID = ?";
+                PreparedStatement updateRoomStmt = connect.prepareStatement(updateRoomQuery);
+                updateRoomStmt.setInt(1, currentAvailableBeds);
+                updateRoomStmt.setString(2, (currentAvailableBeds > 0) ? "Available" : "Occupied");
+                updateRoomStmt.setInt(3, Integer.parseInt(sRID));
+                updateRoomStmt.executeUpdate();
+            }
+
+            // Delete the tenant from the customertenants table
+            String deleteQuery = "DELETE FROM `customertenants` WHERE `TenantID` = ?";
+            PreparedStatement deleteTenantStmt = connect.prepareStatement(deleteQuery);
+            deleteTenantStmt.setInt(1, Integer.parseInt(sTID));
+            deleteTenantStmt.executeUpdate();
+
+            //Reload the data after deletion (if applicable)
+            loadData();
+
+            // Show success message
+            JOptionPane.showMessageDialog(null, "Tenant Deleted and Room Availability Updated!", "Success", JOptionPane.INFORMATION_MESSAGE);
+            
+            txtTenantName.setText("");
+            txtLname.setText("");
+            CboxGender.setSelectedItem("Male");
+            Cboxtype.setSelectedItem("Single");
+            txtContactNum.setText("");
+            txtRoomID.setText("");
+            txtcheckin.setText("");
+            txtcheckout.setText("");
+            CbRoomtype.setSelectedItem("AC");
+            
+
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Deleting Unsuccessful!", "Error", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
-        } 
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "Invalid input format for TenantID or RoomID!", "Input Error", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_bDelActionPerformed
 
     private void txtTenantIDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTenantIDActionPerformed
@@ -649,104 +658,215 @@ public class CustomerCheckin extends javax.swing.JFrame {
     }//GEN-LAST:event_txtTenantIDActionPerformed
 
     private void bttnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bttnUpdateActionPerformed
+        String sTid = txtTenantID.getText();
+        String sTname = txtTenantName.getText();
+        String sLname = txtLname.getText();
+        String sContact = txtContactNum.getText();
+        String sRID = txtRoomID.getText();
+        String sCID = txtcheckin.getText();
+        String sCOD = txtcheckout.getText();
+        String sGender = (String) CboxGender.getSelectedItem();
+        String sBed = (String) Cboxtype.getSelectedItem();
+        String sRoomType = (String) CbRoomtype.getSelectedItem();
 
-    // Get the TenantID from the text field
-    String tenantID = txtTenantID.getText();
+        int confirm = JOptionPane.showConfirmDialog(null, 
+            "Are you sure you want to update this tenant?", 
+            "Confirm update", 
+            JOptionPane.YES_NO_OPTION);
 
-    // Validate TenantID
-    if (tenantID == null || tenantID.trim().isEmpty()) {
-        JOptionPane.showMessageDialog(null, "Please search for a tenant before updating!", "Update Error", JOptionPane.WARNING_MESSAGE);
-        return; // Exit if TenantID is not valid
-    }
+        if (confirm == JOptionPane.YES_OPTION) {
+            try {
+                int TenantID = Integer.parseInt(sTid);
+                Connection connect = dbconnect.getConnection();
 
-    // Retrieve updated values from the text fields
-    String sTname = txtTenantName.getText();
-    String sLname = txtLname.getText();
-    String sContact = txtContactNum.getText();
-    String sRID = txtRoomID.getText();
-    String sCID = txtcheckin.getText();
-    String sCOD = txtcheckout.getText();
-    String sGender = (String) CboxGender.getSelectedItem();
-    String sBed = (String) Cboxtype.getSelectedItem();
-    String sNoOfPax = (String) CboxNoOfPax.getSelectedItem();
-    String sRoomType = (String) CbRoomtype.getSelectedItem();
+                // Step 1: Get the current bed type and available bed count for the tenant before updating
+                String currentBedTypeQuery = "SELECT Bed, RoomID FROM customertenants WHERE TenantID = ?";
+                PreparedStatement currentBedStmt = connect.prepareStatement(currentBedTypeQuery);
+                currentBedStmt.setInt(1, TenantID);
+                ResultSet currentBedRs = currentBedStmt.executeQuery();
 
-    try (Connection connect = dbconnect.getConnection()) {
-        // Update query to modify tenant data
-        String query = "UPDATE customertenants SET TenantName = ?, LastName = ?, Gender = ?, Bed = ?, NoofPax = ?, ContactNumber = ?, RoomID = ?, CheckInDate = ?, CheckOutDate = ?, RoomType = ? WHERE TenantID = ?";
-        PreparedStatement pstmt = connect.prepareStatement(query);
+                String currentBed = null;
+                int currentRoomID = 0;
+                if (currentBedRs.next()) {
+                    currentBed = currentBedRs.getString("Bed");
+                    currentRoomID = currentBedRs.getInt("RoomID");
+                }
 
-        // Bind the updated values to the query
-        pstmt.setString(1, sTname);
-        pstmt.setString(2, sLname);
-        pstmt.setString(3, sGender);
-        pstmt.setString(4, sBed);
-        pstmt.setString(5, sNoOfPax);
-        pstmt.setString(6, sContact);
-        pstmt.setString(7, sRID);
-        pstmt.setString(8, sCID);
-        pstmt.setString(9, sCOD);
-        pstmt.setString(10, sRoomType);
-        pstmt.setString(11, tenantID);
+                // Step 2: Get the current available bed count for the room
+                int currentAvailableBeds = getAvailableBeds(connect, currentRoomID);
 
-        // Execute the update query
-        int rowsUpdated = pstmt.executeUpdate();
+                // Step 3: Convert bed types to bed counts
+                int oldBedCount = getBedCount(currentBed);
+                int newBedCount = getBedCount(sBed);
 
-        if (rowsUpdated > 0) {
-            JOptionPane.showMessageDialog(null, "Tenant details updated successfully!", "Update Success", JOptionPane.INFORMATION_MESSAGE);
-            loadData(); // Reload data if displayed in a table or list
-        } else {
-            JOptionPane.showMessageDialog(null, "No tenant found with the given Tenant ID.", "Update Failed", JOptionPane.ERROR_MESSAGE);
+                // Prevent changing to Group if available beds are less than 4
+                if (sBed.equals("Group") && currentAvailableBeds < 4) {
+                    JOptionPane.showMessageDialog(null, "Insufficient available beds for Group bed type!", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                
+                // Ensure there are enough available beds for the change 
+                if (newBedCount > oldBedCount && currentAvailableBeds < (newBedCount - oldBedCount)) { 
+                    JOptionPane.showMessageDialog(null, "Insufficient available beds to change to the selected bed type!", "Error", JOptionPane.ERROR_MESSAGE); return; }
+
+                // Step 4: Update the tenant details in customertenants table
+                String query = "UPDATE customertenants SET TenantName = ?, LastName = ?, Gender = ?, Bed = ?, ContactNumber = ?, RoomID = ?, CheckInDate = ?, CheckOutDate = ?, RoomType = ? WHERE TenantID = ?";
+                PreparedStatement updateCustomerStmt = connect.prepareStatement(query);
+                updateCustomerStmt.setString(1, sTname);
+                updateCustomerStmt.setString(2, sLname);
+                updateCustomerStmt.setString(3, sGender);
+                updateCustomerStmt.setString(4, sBed);
+                updateCustomerStmt.setString(5, sContact);
+                updateCustomerStmt.setString(6, sRID);
+                updateCustomerStmt.setString(7, sCID);
+                updateCustomerStmt.setString(8, sCOD);
+                updateCustomerStmt.setString(9, sRoomType);
+                updateCustomerStmt.setInt(10, TenantID);
+                updateCustomerStmt.executeUpdate();
+
+                // Step 5: Update available bed count based on the bed type change
+                updateAvailableBeds(connect, currentRoomID, oldBedCount, newBedCount);
+
+                // Step 6: Check if the available beds have reached 0, then update the room status to "Occupied"
+                currentAvailableBeds = getAvailableBeds(connect, currentRoomID); // Re-check after the update
+                if (currentAvailableBeds == 0) {
+                    setRoomStatus(connect, currentRoomID, "Occupied");
+                } else if (currentAvailableBeds > 0) {
+                    setRoomStatus(connect, currentRoomID, "Available");
+                }
+
+                // Reload data if necessary
+                loadData();
+                JOptionPane.showMessageDialog(null, "Customer Maintenance Updated!", "Updating Successfully", 0);
+
+                // Reset the form fields after update
+                resetFormFields();
+
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, "Updating Unsuccessfully!", "Customer Maintenance Error!", 0);
+                e.printStackTrace();
+            }
         }
-    } catch (SQLException e) {
-        JOptionPane.showMessageDialog(null, "Error updating tenant details!", "Database Error", JOptionPane.ERROR_MESSAGE);
-        e.printStackTrace();
-    }
-
-  
     }//GEN-LAST:event_bttnUpdateActionPerformed
 
-    private void bttnSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bttnSearchActionPerformed
-                                           
-    String tenantID = txtTenantID.getText(); // Retrieve TenantID from the text field
-
-    if (tenantID == null || tenantID.trim().isEmpty()) {
-        JOptionPane.showMessageDialog(null, "Please enter a valid Tenant ID!", "Input Error", JOptionPane.WARNING_MESSAGE);
-        return; // Exit the method if no TenantID is provided
-    }
-
-    try (Connection connect = dbconnect.getConnection()) {
-        // Query to search for tenant details by TenantID
-        String query = "SELECT * FROM customertenants WHERE TenantID = ?";
-        PreparedStatement pstmt = connect.prepareStatement(query);
-        pstmt.setString(1, tenantID);
-
-        ResultSet rs = pstmt.executeQuery();
+    // Helper method to get available bed count in the room
+    private int getAvailableBeds(Connection connect, int roomID) throws SQLException {
+        String getRoomQuery = "SELECT NoofAvailableBed FROM rooms WHERE RoomID = ?";
+        PreparedStatement getRoomStmt = connect.prepareStatement(getRoomQuery);
+        getRoomStmt.setInt(1, roomID);
+        ResultSet rs = getRoomStmt.executeQuery();
 
         if (rs.next()) {
-            // Populate the text fields with tenant details
-            txtTenantID.setText(rs.getString("TenantID"));
-            txtTenantName.setText(rs.getString("TenantName"));
-            txtLname.setText(rs.getString("LastName"));
-            txtContactNum.setText(rs.getString("ContactNumber"));
-            txtRoomID.setText(rs.getString("RoomID"));
-            txtcheckin.setText(rs.getString("CheckInDate"));
-            txtcheckout.setText(rs.getString("CheckOutDate"));
-            CboxGender.setSelectedItem(rs.getString("Gender"));
-            Cboxtype.setSelectedItem(rs.getString("Bed"));
-            CboxNoOfPax.setSelectedItem(rs.getString("NoofPax"));
-            CbRoomtype.setSelectedItem(rs.getString("RoomType"));
-
-            JOptionPane.showMessageDialog(null, "Tenant Found!", "Search Success", JOptionPane.INFORMATION_MESSAGE);
-        } else {
-            // Show message if no tenant is found
-            JOptionPane.showMessageDialog(null, "No tenant found with the given Tenant ID.", "Search Failed", JOptionPane.ERROR_MESSAGE);
+            return rs.getInt("NoofAvailableBed");
         }
-    } catch (SQLException e) {
-        JOptionPane.showMessageDialog(null, "Error searching for tenant!", "Database Error", JOptionPane.ERROR_MESSAGE);
-        e.printStackTrace();
+        return 0;
     }
 
+// Helper method to convert bed type to bed count
+    private int getBedCount(String bedType) {
+        switch (bedType) {
+            case "Single":
+                return 1;
+            case "Double":
+                return 2;
+            case "Group":
+                return 4;
+            default:
+                return 0;
+        }
+    }
+
+// Helper method to update available beds in the rooms table
+    private void updateAvailableBeds(Connection connect, int roomID, int oldBedCount, int newBedCount) throws SQLException {
+        // Calculate bed difference (if new bed type requires more beds, we decrement available beds, otherwise we add)
+        int bedDifference = newBedCount - oldBedCount;
+
+        String getRoomQuery = "SELECT NoofAvailableBed FROM rooms WHERE RoomID = ?";
+        PreparedStatement getRoomStmt = connect.prepareStatement(getRoomQuery);
+        getRoomStmt.setInt(1, roomID);
+        ResultSet rs = getRoomStmt.executeQuery();
+
+        if (rs.next()) {
+            int currentAvailableBeds = rs.getInt("NoofAvailableBed");
+            int newAvailableBeds = currentAvailableBeds - bedDifference;
+
+            // If the new available beds count goes negative, we revert the operation
+            if (newAvailableBeds < 0) {
+                JOptionPane.showMessageDialog(null, "Not enough available space for the selected bed type!", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // Update the available bed count in the rooms table
+            String updateRoomQuery = "UPDATE rooms SET NoofAvailableBed = ? WHERE RoomID = ?";
+            PreparedStatement updateRoomStmt = connect.prepareStatement(updateRoomQuery);
+            updateRoomStmt.setInt(1, newAvailableBeds);
+            updateRoomStmt.setInt(2, roomID);
+            updateRoomStmt.executeUpdate();
+        }
+}
+
+    // Helper method to set the room status (Available/Occupied)
+    private void setRoomStatus(Connection connect, int roomID, String status) throws SQLException {
+        String updateStatusQuery = "UPDATE rooms SET Status = ? WHERE RoomID = ?";
+        PreparedStatement updateStatusStmt = connect.prepareStatement(updateStatusQuery);
+        updateStatusStmt.setString(1, status);
+        updateStatusStmt.setInt(2, roomID);
+        updateStatusStmt.executeUpdate();
+    }
+
+    // Reset form fields after update
+    private void resetFormFields() {
+        txtTenantName.setText("");
+        txtLname.setText("");
+        CboxGender.setSelectedItem("Male");
+        Cboxtype.setSelectedItem("Single");
+        txtContactNum.setText("");
+        txtRoomID.setText("");
+        txtcheckin.setText("");
+        txtcheckout.setText("");
+        CbRoomtype.setSelectedItem("AC");
+    }
+
+    private void bttnSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bttnSearchActionPerformed
+        String tenantID = txtTenantID.getText(); // Retrieve TenantID from the text field
+
+        if (tenantID == null || tenantID.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Please enter a valid Tenant ID!", "Input Error", JOptionPane.WARNING_MESSAGE);
+            return; // Exit the method if no TenantID is provided
+        }
+        
+        JOptionPane.showConfirmDialog(null, "Are you sure you want to search for tenant details?", "Confirm Search", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        
+        try (Connection connect = dbconnect.getConnection()) {
+            // Query to search for tenant details by TenantID
+            String query = "SELECT * FROM customertenants WHERE TenantID = ?";
+            PreparedStatement pstmt = connect.prepareStatement(query);
+            pstmt.setString(1, tenantID);
+
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                // Populate the text fields with tenant details
+                txtTenantID.setText(rs.getString("TenantID"));
+                txtTenantName.setText(rs.getString("TenantName"));
+                txtLname.setText(rs.getString("LastName"));
+                txtContactNum.setText(rs.getString("ContactNumber"));
+                txtRoomID.setText(rs.getString("RoomID"));
+                txtcheckin.setText(rs.getString("CheckInDate"));
+                txtcheckout.setText(rs.getString("CheckOutDate"));
+                CboxGender.setSelectedItem(rs.getString("Gender"));
+                Cboxtype.setSelectedItem(rs.getString("Bed"));
+                CbRoomtype.setSelectedItem(rs.getString("RoomType"));
+
+                JOptionPane.showMessageDialog(null, "Tenant Found!", "Search Success", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                // Show message if no tenant is found
+                JOptionPane.showMessageDialog(null, "No tenant found with the given Tenant ID.", "Search Failed", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Error searching for tenant!", "Database Error", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
     }//GEN-LAST:event_bttnSearchActionPerformed
 
     private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
@@ -756,18 +876,18 @@ public class CustomerCheckin extends javax.swing.JFrame {
         txtLname.setText((String)jTable1.getValueAt(row, 2));
         CboxGender.setSelectedItem((String)jTable1.getValueAt(row, 3));
         Cboxtype.setSelectedItem((String)jTable1.getValueAt(row, 4));
-        CboxNoOfPax.setSelectedItem(Integer.toString( (int)jTable1.getValueAt(row, 5)));
-        txtContactNum.setText((String) jTable1.getValueAt(row, 6));
-        txtRoomID.setText(Integer.toString( (int)jTable1.getValueAt(row, 7)));
-        txtcheckin.setText((String) jTable1.getValueAt(row, 8));
-        txtcheckout.setText((String) jTable1.getValueAt(row, 9));
-        CbRoomtype.setSelectedItem((String)jTable1.getValueAt(row, 10));
+        txtContactNum.setText((String) jTable1.getValueAt(row, 5));
+        txtRoomID.setText(Integer.toString( (int)jTable1.getValueAt(row, 6)));
+        txtcheckin.setText((String) jTable1.getValueAt(row, 7));
+        txtcheckout.setText((String) jTable1.getValueAt(row, 8));
+        CbRoomtype.setSelectedItem((String)jTable1.getValueAt(row, 9));
         
     }//GEN-LAST:event_jTable1MouseClicked
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-         new PaymentMethod().setVisible(true);
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void bttnSearch1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bttnSearch1ActionPerformed
+        JOptionPane.showConfirmDialog(null, "Are you sure you want to proceed to the Payment Method?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        new PaymentMethod().setVisible(true);
+    }//GEN-LAST:event_bttnSearch1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -808,15 +928,14 @@ public class CustomerCheckin extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> CbRoomtype;
     private javax.swing.JComboBox<String> CboxGender;
-    private javax.swing.JComboBox<String> CboxNoOfPax;
     private javax.swing.JComboBox<String> Cboxtype;
     private javax.swing.JButton bCheckin;
     private javax.swing.JButton bDel;
     private javax.swing.JButton bttnClear;
     private javax.swing.JButton bttnSearch;
+    private javax.swing.JButton bttnSearch1;
     private javax.swing.JButton bttnUpdate;
     private javax.swing.JButton bttnexit;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel4;
@@ -834,7 +953,6 @@ public class CustomerCheckin extends javax.swing.JFrame {
     private javax.swing.JLabel lblGender1;
     private javax.swing.JLabel lblGender2;
     private javax.swing.JLabel lblLName;
-    private javax.swing.JLabel lblNoPax;
     private javax.swing.JTextField txtContactNum;
     private javax.swing.JTextField txtLname;
     private javax.swing.JTextField txtRoomID;
