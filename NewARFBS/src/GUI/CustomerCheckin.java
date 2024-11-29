@@ -704,6 +704,10 @@ public class CustomerCheckin extends javax.swing.JFrame {
                     JOptionPane.showMessageDialog(null, "Insufficient available beds for Group bed type!", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
+                
+                // Ensure there are enough available beds for the change 
+                if (newBedCount > oldBedCount && currentAvailableBeds < (newBedCount - oldBedCount)) { 
+                    JOptionPane.showMessageDialog(null, "Insufficient available beds to change to the selected bed type!", "Error", JOptionPane.ERROR_MESSAGE); return; }
 
                 // Step 4: Update the tenant details in customertenants table
                 String query = "UPDATE customertenants SET TenantName = ?, LastName = ?, Gender = ?, Bed = ?, ContactNumber = ?, RoomID = ?, CheckInDate = ?, CheckOutDate = ?, RoomType = ? WHERE TenantID = ?";
